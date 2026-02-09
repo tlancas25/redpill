@@ -5,7 +5,6 @@ import SEOHead from '../../components/shared/SEOHead';
 import Card from '../../components/ui/Card';
 import { media } from '../../styles/breakpoints';
 import { BLOG_CATEGORIES } from '../../utils/constants';
-import { formatDate } from '../../utils/helpers';
 import { Article } from '../../types';
 
 const BlogContainer = styled.div`

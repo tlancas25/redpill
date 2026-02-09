@@ -5,7 +5,6 @@ import SEOHead from '../../components/shared/SEOHead';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { media } from '../../styles/breakpoints';
-import { COURSE_CATEGORIES } from '../../utils/constants';
 import { formatPrice, formatDuration } from '../../utils/helpers';
 
 const LearningContainer = styled.div`

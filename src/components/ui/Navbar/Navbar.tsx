@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../../hooks/useAuth';
 import { useCart } from '../../../hooks/useCart';
-import { NAV_LINKS, APP_NAME } from '../../../utils/constants';
+import { NAV_LINKS } from '../../../utils/constants';
 import { media } from '../../../styles/breakpoints';
 
 const NavContainer = styled.header<{ $scrolled: boolean }>`

@@ -5,7 +5,6 @@ import SEOHead from '../../components/shared/SEOHead';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import { useAuth } from '../../hooks/useAuth';
-import { validateEmail } from '../../utils/validators';
 import { media } from '../../styles/breakpoints';
 
 const AuthContainer = styled.div`
