@@ -17,7 +17,7 @@ export const useCourseProgress = (courseId: string) => {
   }, [userProfile, courseId]);
 
   const markLessonComplete = async (lessonId: string) => {
-    if (!user) return;
+    if (!user || !db) return;
 
     try {
       const userRef = doc(db, 'users', user.uid);

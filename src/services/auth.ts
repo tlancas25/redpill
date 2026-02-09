@@ -14,8 +14,18 @@ import { UserProfile } from '../types';
 
 const googleProvider = new GoogleAuthProvider();
 
+const requireAuth = () => {
+  if (!auth) throw new Error('Firebase is not configured. Please add your Firebase config to .env');
+  return auth;
+};
+
+const requireDb = () => {
+  if (!db) throw new Error('Firebase is not configured. Please add your Firebase config to .env');
+  return db;
+};
+
 export const loginWithEmail = async (email: string, password: string) => {
-  const result = await signInWithEmailAndPassword(auth, email, password);
+  const result = await signInWithEmailAndPassword(requireAuth(), email, password);
   return result.user;
 };
 
@@ -24,15 +34,17 @@ export const registerWithEmail = async (
   password: string,
   displayName: string
 ) => {
-  const result = await createUserWithEmailAndPassword(auth, email, password);
+  const result = await createUserWithEmailAndPassword(requireAuth(), email, password);
   await updateProfile(result.user, { displayName });
   await createUserProfile(result.user, displayName);
   return result.user;
 };
 
 export const loginWithGoogle = async () => {
-  const result = await signInWithPopup(auth, googleProvider);
-  const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+  const a = requireAuth();
+  const d = requireDb();
+  const result = await signInWithPopup(a, googleProvider);
+  const userDoc = await getDoc(doc(d, 'users', result.user.uid));
   if (!userDoc.exists()) {
     await createUserProfile(result.user, result.user.displayName || 'User');
   }
@@ -40,14 +52,15 @@ export const loginWithGoogle = async () => {
 };
 
 export const logout = async () => {
-  await signOut(auth);
+  await signOut(requireAuth());
 };
 
 export const resetPassword = async (email: string) => {
-  await sendPasswordResetEmail(auth, email);
+  await sendPasswordResetEmail(requireAuth(), email);
 };
 
 export const createUserProfile = async (user: User, displayName: string) => {
+  const d = requireDb();
   const userProfile: Omit<UserProfile, 'createdAt'> & { createdAt: any } = {
     uid: user.uid,
     email: user.email || '',
@@ -62,11 +75,12 @@ export const createUserProfile = async (user: User, displayName: string) => {
       validUntil: null,
     },
   };
-  await setDoc(doc(db, 'users', user.uid), userProfile);
+  await setDoc(doc(d, 'users', user.uid), userProfile);
 };
 
 export const getUserProfile = async (uid: string): Promise<UserProfile | null> => {
-  const userDoc = await getDoc(doc(db, 'users', uid));
+  const d = requireDb();
+  const userDoc = await getDoc(doc(d, 'users', uid));
   if (userDoc.exists()) {
     return userDoc.data() as UserProfile;
   }

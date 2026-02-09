@@ -1,8 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&family=Share+Tech+Mono&display=swap');
-
   *, *::before, *::after {
     margin: 0;
     padding: 0;
