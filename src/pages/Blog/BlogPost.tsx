@@ -22,7 +22,7 @@ const BackLink = styled(Link)`
   gap: 0.5rem;
   color: ${({ theme }) => theme.colors.primary};
   text-decoration: none;
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${({ theme }) => theme.fonts.code};
   font-size: 0.875rem;
   margin-bottom: 2rem;
   transition: opacity ${({ theme }) => theme.transitions.fast};
@@ -175,9 +175,9 @@ const Tag = styled.span`
 const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
   // Simple markdown parser for headings, lists, blockquotes, and paragraphs
   const lines = content.split('\n');
-  const elements: JSX.Element[] = [];
+  const elements: React.JSX.Element[] = [];
   
-  let listItems: JSX.Element[] = [];
+  let listItems: React.JSX.Element[] = [];
   let inList = false;
 
   lines.forEach((line, index) => {
