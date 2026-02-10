@@ -159,40 +159,40 @@ const sampleCourses = [
   },
   {
     id: '2',
-    title: 'Advanced Credit Engineering',
-    slug: 'advanced-credit-engineering',
-    description: 'Master the credit system and build financial freedom.',
+    title: 'Financial Sovereignty Masterclass',
+    slug: 'financial-sovereignty-masterclass',
+    description: 'Build unshakeable wealth, master credit, and escape the fiat trap.',
     thumbnail: '',
     instructor: 'RedPill Academy',
-    price: 59.99,
-    category: 'Credit Repair',
-    difficulty: 'Intermediate' as const,
-    totalDuration: 480,
-    lessonCount: 20,
-    enrolledCount: 189,
-    rating: 4.9,
+    price: 99.99,
+    category: 'Financial Freedom',
+    difficulty: 'Advanced' as const,
+    totalDuration: 1200,
+    lessonCount: 45,
+    enrolledCount: 567,
+    rating: 5.0,
   },
   {
     id: '3',
-    title: 'Tech Mastery: Digital Survival',
-    slug: 'tech-mastery-digital-survival',
-    description: 'Essential tech skills for the modern world.',
+    title: 'Biohacking for Peak Performance',
+    slug: 'biohacking-peak-performance',
+    description: 'Optimize your biology for maximum energy, focus, and longevity.',
     thumbnail: '',
     instructor: 'RedPill Academy',
-    price: 39.99,
-    category: 'Tech Mastery',
-    difficulty: 'Beginner' as const,
-    totalDuration: 360,
-    lessonCount: 15,
-    enrolledCount: 156,
-    rating: 4.7,
+    price: 79.99,
+    category: 'Biohacking',
+    difficulty: 'Intermediate' as const,
+    totalDuration: 600,
+    lessonCount: 25,
+    enrolledCount: 342,
+    rating: 4.9,
   },
 ];
 
 const Learning: React.FC = () => {
   return (
     <>
-      <SEOHead title="Learn" description="Enter The Construct - Video courses on cybersecurity, credit repair, and tech mastery." />
+      <SEOHead title="Learn" description="Enter The Construct - Video courses on biohacking, wealth creation, psychology, and tech mastery." />
 
       <LearningContainer>
         <HeroSection>

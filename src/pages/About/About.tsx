@@ -118,51 +118,52 @@ const About: React.FC = () => {
         <Section>
           <SectionTitle>Our Vision</SectionTitle>
           <SectionText>
-            To build a world where information is the great equalizer — where anyone,
-            regardless of background, can access the knowledge needed to secure their 
-            digital life, repair their financial standing, and master the technologies 
-            shaping our future.
+            To build a world where individuals are truly sovereign — physically,
+            financially, and mentally. We believe that the matrix is designed to
+            keep you weak, broke, and distracted. Our vision is to provide the
+            keys to break those chains and empower you to own your future.
           </SectionText>
         </Section>
 
         <Section>
           <SectionTitle>Who We Are</SectionTitle>
           <SectionText>
-            RedPillReader is a digital knowledge platform built for those who refuse to 
-            stay asleep. We are educators, technologists, and financial strategists who 
-            believe that the most powerful weapon in the modern world is knowledge. Our 
-            content is designed to break down complex systems — cybersecurity, credit, 
-            and technology — into actionable intelligence that anyone can use.
+            RedPillReader is a holistic self-improvement platform for those who
+            refuse to stay asleep. We are a collective of biohackers, financial
+            strategists, technologists, and free thinkers. We believe that true
+            freedom comes from mastery of all domains: your body, your bank
+            account, and your mind.
           </SectionText>
         </Section>
 
         <Section>
-          <SectionTitle>What We Do</SectionTitle>
+          <SectionTitle>The Three Pillars</SectionTitle>
           <PillarGrid>
             <Card hoverable>
-              <PillarIcon>🛡️</PillarIcon>
-              <PillarTitle>The Shield</PillarTitle>
+              <PillarIcon>🧬</PillarIcon>
+              <PillarTitle>The Body</PillarTitle>
               <PillarDesc>
-                Cyber-Defense & Tech Literacy — Arm yourself with the knowledge to 
-                protect your digital identity, secure your devices, and navigate the 
-                digital world with confidence.
+                Your vessel in this reality. We teach biohacking, nutrition, and
+                physical optimization to escape the sick-care system and build
+                unshakeable vitality.
               </PillarDesc>
             </Card>
             <Card hoverable>
-              <PillarIcon>🔑</PillarIcon>
-              <PillarTitle>The Key</PillarTitle>
+              <PillarIcon>💰</PillarIcon>
+              <PillarTitle>The Wealth</PillarTitle>
               <PillarDesc>
-                Financial Engineering & Credit Repair — Unlock the secrets of credit 
-                systems, learn to repair and build your financial profile, and master 
-                the money game.
+                Money is energy. We provide the blueprints for financial engineering,
+                credit repair, and wealth creation to buy your freedom from the
+                rat race.
               </PillarDesc>
             </Card>
             <Card hoverable>
-              <PillarIcon>📥</PillarIcon>
-              <PillarTitle>The Download</PillarTitle>
+              <PillarIcon>🧠</PillarIcon>
+              <PillarTitle>The Mind</PillarTitle>
               <PillarDesc>
-                The Knowledge Base — Access our growing library of eBooks, video courses, 
-                and articles designed to elevate your understanding of the systems around you.
+                The ultimate operating system. We offer tools for psychological
+                reprogramming, critical thinking, and technical literacy to decode
+                the systems of control.
               </PillarDesc>
             </Card>
           </PillarGrid>

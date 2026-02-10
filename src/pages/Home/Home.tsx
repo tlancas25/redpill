@@ -152,7 +152,7 @@ const Home: React.FC = () => {
     <>
       <SEOHead
         title="Home"
-        description="RedPillReader - Decode the System. Master the Machine. Own Your Future. eBooks, courses, and insights on cybersecurity, credit repair, and tech literacy."
+        description="RedPillReader - Decode the System. Master the Machine. Own Your Future. Holistic self-improvement platform covering health, wealth, mindset, tech, and esoteric knowledge."
       />
 
       {/* Hero */}
@@ -165,7 +165,10 @@ const Home: React.FC = () => {
           <HeroTitle>
             TAKE THE <span>RED</span> PILL
           </HeroTitle>
-          <HeroSubtitle>{APP_TAGLINE}</HeroSubtitle>
+          <HeroSubtitle>
+            Break free from the constraints of the matrix. Master your health,
+            wealth, and mind. Decode the system and reclaim your sovereignty.
+          </HeroSubtitle>
           <HeroButtons>
             <Link to="/store">
               <Button size="lg">Browse Store</Button>
@@ -181,30 +184,38 @@ const Home: React.FC = () => {
 
       {/* Features */}
       <FeaturesSection>
-        <SectionTitle>What We Offer</SectionTitle>
+        <SectionTitle>Your Path to Sovereignty</SectionTitle>
         <FeaturesGrid>
           <Card hoverable>
+            <FeatureIcon>🧬</FeatureIcon>
+            <FeatureTitle>Biohacking & Health</FeatureTitle>
+            <FeatureDescription>
+              Optimize your biology. Escape the sick-care system. Master nutrition,
+              fitness, and longevity to build an unshakeable vessel.
+            </FeatureDescription>
+          </Card>
+          <Card hoverable>
+            <FeatureIcon>💰</FeatureIcon>
+            <FeatureTitle>Wealth Creation</FeatureTitle>
+            <FeatureDescription>
+              Escape the rat race. Learn financial engineering, credit mastery,
+              and sovereign wealth strategies to buy your freedom.
+            </FeatureDescription>
+          </Card>
+          <Card hoverable>
+            <FeatureIcon>🧠</FeatureIcon>
+            <FeatureTitle>Mindset & Psychology</FeatureTitle>
+            <FeatureDescription>
+              Reprogram your mind. Break limiting beliefs, master social dynamics,
+              and develop the mental fortitude of a sovereign individual.
+            </FeatureDescription>
+          </Card>
+          <Card hoverable>
             <FeatureIcon>🛡️</FeatureIcon>
-            <FeatureTitle>Cyber-Defense & Tech Literacy</FeatureTitle>
+            <FeatureTitle>Tech & Security</FeatureTitle>
             <FeatureDescription>
-              Arm yourself with the knowledge to protect your digital identity, 
-              secure your devices, and navigate the digital world with confidence.
-            </FeatureDescription>
-          </Card>
-          <Card hoverable>
-            <FeatureIcon>🔑</FeatureIcon>
-            <FeatureTitle>Financial Engineering & Credit Repair</FeatureTitle>
-            <FeatureDescription>
-              Unlock the secrets of credit systems, learn to repair and build 
-              your financial profile, and master the money game.
-            </FeatureDescription>
-          </Card>
-          <Card hoverable>
-            <FeatureIcon>📥</FeatureIcon>
-            <FeatureTitle>The Knowledge Base</FeatureTitle>
-            <FeatureDescription>
-              Access our growing library of eBooks, video courses, and articles 
-              designed to elevate your understanding of the systems around you.
+              Secure your digital life. Master cybersecurity, privacy tools, and
+              the technologies that shape our future.
             </FeatureDescription>
           </Card>
         </FeaturesGrid>

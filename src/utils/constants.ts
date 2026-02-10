@@ -14,24 +14,33 @@ export const NAV_LINKS = [
 // Categories
 export const PRODUCT_CATEGORIES = [
   'All',
+  'Health & Biohacking',
+  'Wealth Creation',
+  'Mindset & Psychology',
+  'Survival & Prep',
+  'Relationships',
+  'Esoteric Knowledge',
   'Cybersecurity',
-  'Credit Repair',
   'Tech Literacy',
 ];
 
 export const BLOG_CATEGORIES = [
   'All',
-  'Cybersecurity',
-  'Credit Repair',
-  'Tech Tips',
+  'Health',
+  'Wealth',
+  'Mindset',
+  'Survival',
+  'Tech',
   'News',
 ];
 
 export const COURSE_CATEGORIES = [
   'All',
-  'Cybersecurity',
-  'Credit Repair',
+  'Biohacking',
+  'Financial Freedom',
+  'Psychology',
   'Tech Mastery',
+  'Survival Skills',
 ];
 
 export const COURSE_DIFFICULTIES = ['Beginner', 'Intermediate', 'Advanced'];
