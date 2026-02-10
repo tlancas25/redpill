@@ -6,6 +6,7 @@ import Card from '../../components/ui/Card';
 import { media } from '../../styles/breakpoints';
 import { BLOG_CATEGORIES } from '../../utils/constants';
 import { Article } from '../../types';
+import { articles } from '../../data/articles';
 
 const BlogContainer = styled.div`
   max-width: 1200px;
@@ -121,92 +122,13 @@ const StyledLink = styled(Link)`
   color: inherit;
 `;
 
-// Sample articles
-const sampleArticles: Article[] = [
-  {
-    id: '1',
-    title: 'Top 10 Biohacks for Cognitive Performance',
-    slug: 'top-10-biohacks-cognitive',
-    excerpt: 'Unlock your brain\'s potential with these proven biohacking strategies for focus, memory, and mental clarity.',
-    content: '',
-    featuredImage: '',
-    category: 'Health',
-    tags: ['biohacking', 'health', 'focus'],
-    author: { name: 'RedPill Team', avatar: '', bio: '' },
-    publishedAt: new Date(),
-    updatedAt: new Date(),
-    readTime: 8,
-    featured: true,
-  },
-  {
-    id: '2',
-    title: 'The Psychology of the Matrix',
-    slug: 'psychology-of-matrix',
-    excerpt: 'Understanding the psychological mechanisms used to keep the masses asleep, and how to break free.',
-    content: '',
-    featuredImage: '',
-    category: 'Mindset',
-    tags: ['psychology', 'matrix', 'freedom'],
-    author: { name: 'RedPill Team', avatar: '', bio: '' },
-    publishedAt: new Date(),
-    updatedAt: new Date(),
-    readTime: 12,
-    featured: true,
-  },
-  {
-    id: '3',
-    title: 'Building Generational Wealth in 2026',
-    slug: 'generational-wealth-2026',
-    excerpt: 'Strategies for creating sovereign wealth that can withstand economic turbulence and system shocks.',
-    content: '',
-    featuredImage: '',
-    category: 'Wealth',
-    tags: ['wealth', 'finance', 'sovereignty'],
-    author: { name: 'RedPill Team', avatar: '', bio: '' },
-    publishedAt: new Date(),
-    updatedAt: new Date(),
-    readTime: 15,
-    featured: true,
-  },
-  {
-    id: '4',
-    title: '5 Essential Privacy Tools Everyone Needs',
-    slug: '5-essential-privacy-tools',
-    excerpt: 'Protect your digital footprint with these must-have privacy tools that every internet user should know about.',
-    content: '',
-    featuredImage: '',
-    category: 'Tech',
-    tags: ['privacy', 'tools', 'security'],
-    author: { name: 'RedPill Team', avatar: '', bio: '' },
-    publishedAt: new Date(),
-    updatedAt: new Date(),
-    readTime: 5,
-    featured: false,
-  },
-  {
-    id: '5',
-    title: 'Urban Survival: Bug In or Bug Out?',
-    slug: 'urban-survival-bug-in-out',
-    excerpt: 'Analyzing the pros and cons of sheltering in place vs. evacuating during a major crisis.',
-    content: '',
-    featuredImage: '',
-    category: 'Survival',
-    tags: ['survival', 'prep', 'crisis'],
-    author: { name: 'RedPill Team', avatar: '', bio: '' },
-    publishedAt: new Date(),
-    updatedAt: new Date(),
-    readTime: 10,
-    featured: false,
-  },
-];
-
 const Blog: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('All');
 
   const filteredArticles =
     activeCategory === 'All'
-      ? sampleArticles
-      : sampleArticles.filter((a) => a.category === activeCategory);
+      ? articles
+      : articles.filter((a) => a.category === activeCategory);
 
   return (
     <>

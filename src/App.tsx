@@ -14,6 +14,7 @@ import Loader from './components/ui/Loader';
 const Home = lazy(() => import('./pages/Home'));
 const Store = lazy(() => import('./pages/Store'));
 const Blog = lazy(() => import('./pages/Blog'));
+const BlogPost = lazy(() => import('./pages/Blog').then(module => ({ default: module.BlogPost })));
 const Learning = lazy(() => import('./pages/Learning'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
@@ -69,6 +70,7 @@ const App: React.FC = () => {
                       <Route path="/" element={<Home />} />
                       <Route path="/store" element={<Store />} />
                       <Route path="/blog" element={<Blog />} />
+                      <Route path="/blog/:slug" element={<BlogPost />} />
                       <Route path="/learn" element={<Learning />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/contact" element={<Contact />} />
