@@ -1,15 +1,15 @@
-# Firebase GitHub Integration Deployment
+# Firebase App Hosting GitHub Deployment
 
-Deploy directly from Firebase Console with GitHub integration for better KPI tracking.
+Deploy directly from Firebase App Hosting with GitHub integration so Firebase builds and rolls out the app automatically after each push.
 
 ## 🔄 Deployment Workflow
 
 **You push code → Firebase detects → Auto-deploys**
 
 1. Push changes to GitHub `master` branch
-2. Firebase Console detects the push
-3. Automatic build & deployment
-4. KPIs tracked in Firebase Analytics
+2. Firebase App Hosting detects the push
+3. App Hosting builds the React app and starts the production Node server defined in `apphosting.yaml`
+4. The app serves the SPA and backend API from the same deployment
 
 ## 🛠️ Setup Firebase GitHub Integration
 
@@ -17,44 +17,52 @@ Deploy directly from Firebase Console with GitHub integration for better KPI tra
 
 1. Go to [Firebase Console](https://console.firebase.google.com)
 2. Select project: **redpillreader-249ec**
-3. Hosting → Get started
-4. Click **"Connect to GitHub"**
+3. Build → App Hosting
+4. Create or open backend: **redpill**
 5. Authenticate with your GitHub account
 6. Select repo: `tlancas25/redpill`
 7. Select branch: `master`
 
 ### 2. Configure Build Settings
 
-Firebase will ask for build command:
-```
-npm run build
+Firebase will use [apphosting.yaml](apphosting.yaml) in the repo root.
+
+Build command:
+```bash
+npm install --prefix server && npm run build
 ```
 
-Public directory:
-```
-build
+Run command:
+```bash
+node server/apphosting.js
 ```
 
 ### 3. Set Environment Variables in Firebase
 
-In Firebase Console → Hosting → Environment variables:
+In Firebase Console → App Hosting → redpill backend → Settings → Environment:
 
 ```bash
 REACT_APP_FIREBASE_API_KEY=AIzaSyA7bB4B7VO9GNq6mUaTVRUMTs31Em52EMI
-REACT_APP_FIREBASE_AUTH_DOMAIN=redpillreader-249ec.firebaseapp.com
+REACT_APP_FIREBASE_AUTH_DOMAIN=www.redpillreader.com
 REACT_APP_FIREBASE_PROJECT_ID=redpillreader-249ec
 REACT_APP_FIREBASE_STORAGE_BUCKET=redpillreader-249ec.firebasestorage.app
 REACT_APP_FIREBASE_MESSAGING_SENDER_ID=922536968843
 REACT_APP_FIREBASE_APP_ID=1:922536968843:web:dbecd8d28327be516f4a8e
-REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_test_...
-REACT_APP_API_URL=https://api-redpillreader-249ec.web.app
+REACT_APP_FIREBASE_MEASUREMENT_ID=G-JQPR7VL8C1
+REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_live_...
+REACT_APP_API_URL=/api
+FRONTEND_URL=https://www.redpillreader.com
+GITHUB_CALLBACK_URL=https://www.redpillreader.com/api/auth/github/callback
+JWT_SECRET=...
+SESSION_SECRET=...
+GITHUB_CLIENT_ID=...
+GITHUB_CLIENT_SECRET=...
+STRIPE_SECRET_KEY=...
+STRIPE_WEBHOOK_SECRET=...
+STRIPE_WEBHOOK_SECRET_THIN=...
 ```
 
-For secrets (Stripe, GitHub OAuth), use:
-```bash
-firebase functions:config:set stripe.secret_key="sk_live_..."
-firebase functions:config:set github.client_secret="..."
-```
+Store sensitive values in App Hosting environment or Secret Manager references, not in `.env`.
 
 ## 📊 KPI Tracking in Firebase
 
@@ -100,20 +108,20 @@ git commit -m "Your change description"
 # Push to GitHub (triggers Firebase auto-deploy)
 git push origin master
 
-# Firebase builds & deploys automatically
-# Track in Firebase Console → Hosting
+# Firebase App Hosting builds & deploys automatically
+# Track in Firebase Console → App Hosting → Rollouts
 ```
 
 ## 🎯 Quick Deploy Checklist
 
 Before pushing:
 - [ ] `npm run build` succeeds locally
-- [ ] All secrets in Firebase config (not in code)
+- [ ] All required App Hosting environment variables are set
 - [ ] GitHub callback URLs updated for production
-- [ ] Test in emulator first
+- [ ] `apphosting.yaml` is present in the repo root
 
 After pushing:
-- [ ] Check Firebase Console → Hosting → Deploys
+- [ ] Check Firebase Console → App Hosting → Rollouts
 - [ ] Verify site at https://www.redpillreader.com
 - [ ] Test GitHub OAuth login
 - [ ] Test Stripe payment flow
@@ -161,11 +169,21 @@ npm ci  # Use ci instead of install
 rm -rf node_modules && npm ci
 ```
 
-### Environment Variables Missing
+### App Hosting Rollout Fails
+Check Firebase Console → App Hosting → Rollouts.
+
+Common causes:
 ```bash
-# Verify in Firebase Console
-firebase functions:config:get
+# Missing root lockfile or build output
+npm install
+npm run build
+
+# Missing server dependencies for the production runtime
+npm install --prefix server
 ```
+
+### Environment Variables Missing
+Verify App Hosting backend environment values in Firebase Console.
 
 ### Custom Domain Issues
 ```bash
@@ -183,6 +201,6 @@ nslookup www.redpillreader.com
 
 ---
 
-**Current Status:** ✅ Ready for Firebase GitHub integration setup
+**Current Status:** ✅ Ready for Firebase App Hosting GitHub deployment
 
-**Next:** Go to Firebase Console and connect your GitHub repo!
+**Next:** Push to `master`, then verify the new rollout in App Hosting.

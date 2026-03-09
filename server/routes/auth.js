@@ -5,6 +5,7 @@ const admin = require('firebase-admin');
 const jwt = require('jsonwebtoken');
 
 const router = express.Router();
+const isGitHubAuthConfigured = Boolean(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET);
 
 const getJwtSecret = () => {
   if (!process.env.JWT_SECRET) {
@@ -21,89 +22,97 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
-// Configure GitHub Strategy
-passport.use(
-  new GitHubStrategy(
-    {
-      clientID: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: process.env.GITHUB_CALLBACK_URL || 'http://localhost:5000/api/auth/github/callback',
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        const email = profile.emails?.[0]?.value;
-        const githubId = profile.id;
-        const username = profile.username;
-        const displayName = profile.displayName || username;
-        const avatarUrl = profile.photos?.[0]?.value;
-        const profileUrl = profile.profileUrl;
-        
-        // Check if user exists by email
-        const userQuery = await db.collection('users').where('email', '==', email).limit(1).get();
-        
-        if (!userQuery.empty) {
-          // Existing user - update GitHub info
-          const userDoc = userQuery.docs[0];
-          const userData = userDoc.data();
-          
-          await userDoc.ref.update({
+if (isGitHubAuthConfigured) {
+  passport.use(
+    new GitHubStrategy(
+      {
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL: process.env.GITHUB_CALLBACK_URL || 'http://localhost:5000/api/auth/github/callback',
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          const email = profile.emails?.[0]?.value;
+          const githubId = profile.id;
+          const username = profile.username;
+          const displayName = profile.displayName || username;
+          const avatarUrl = profile.photos?.[0]?.value;
+          const profileUrl = profile.profileUrl;
+
+          const userQuery = await db.collection('users').where('email', '==', email).limit(1).get();
+
+          if (!userQuery.empty) {
+            const userDoc = userQuery.docs[0];
+            const userData = userDoc.data();
+
+            await userDoc.ref.update({
+              githubId,
+              githubUsername: username,
+              githubDisplayName: displayName,
+              githubAvatarUrl: avatarUrl,
+              githubProfileUrl: profileUrl,
+              githubAccessToken: accessToken,
+              updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+
+            return done(null, {
+              uid: userDoc.id,
+              email: userData.email,
+              displayName: userData.displayName || displayName,
+              githubUsername: username,
+              githubAvatarUrl: avatarUrl,
+            });
+          }
+
+          const newUser = {
+            email,
+            displayName,
+            photoURL: avatarUrl,
             githubId,
             githubUsername: username,
             githubDisplayName: displayName,
             githubAvatarUrl: avatarUrl,
             githubProfileUrl: profileUrl,
             githubAccessToken: accessToken,
+            role: 'user',
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-          });
-          
-          return done(null, { 
-            uid: userDoc.id, 
-            email: userData.email,
-            displayName: userData.displayName || displayName,
+            purchasedProducts: [],
+            courseProgress: {},
+            savedArticles: [],
+            subscription: {
+              plan: 'free',
+              validUntil: null,
+            },
+          };
+
+          const userRef = await db.collection('users').add(newUser);
+
+          return done(null, {
+            uid: userRef.id,
+            email,
+            displayName,
             githubUsername: username,
             githubAvatarUrl: avatarUrl,
           });
+        } catch (error) {
+          console.error('GitHub auth error:', error);
+          return done(error, false);
         }
-        
-        // New user - create in Firestore
-        const newUser = {
-          email,
-          displayName,
-          photoURL: avatarUrl,
-          githubId,
-          githubUsername: username,
-          githubDisplayName: displayName,
-          githubAvatarUrl: avatarUrl,
-          githubProfileUrl: profileUrl,
-          githubAccessToken: accessToken,
-          role: 'user',
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-          purchasedProducts: [],
-          courseProgress: {},
-          savedArticles: [],
-          subscription: {
-            plan: 'free',
-            validUntil: null,
-          },
-        };
-        
-        const userRef = await db.collection('users').add(newUser);
-        
-        return done(null, { 
-          uid: userRef.id,
-          email,
-          displayName,
-          githubUsername: username,
-          githubAvatarUrl: avatarUrl,
-        });
-      } catch (error) {
-        console.error('GitHub auth error:', error);
-        return done(error, false);
       }
-    }
-  )
-);
+    )
+  );
+} else {
+  console.warn('GitHub OAuth is disabled because GITHUB_CLIENT_ID or GITHUB_CLIENT_SECRET is not configured.');
+}
+
+const ensureGitHubAuthConfigured = (req, res, next) => {
+  if (!isGitHubAuthConfigured) {
+    return res.status(503).json({ error: 'GitHub OAuth is not configured' });
+  }
+
+  return next();
+};
 
 // Serialize user for session
 passport.serializeUser((user, done) => {
@@ -140,12 +149,13 @@ function generateToken(user) {
 // Routes
 
 // GET /api/auth/github - Initiate GitHub OAuth
-router.get('/github', passport.authenticate('github', {
+router.get('/github', ensureGitHubAuthConfigured, passport.authenticate('github', {
   scope: ['user:email', 'read:user'],
 }));
 
 // GET /api/auth/github/callback - GitHub OAuth callback
 router.get('/github/callback',
+  ensureGitHubAuthConfigured,
   passport.authenticate('github', { failureRedirect: '/login?error=github' }),
   (req, res) => {
     // Successful authentication
@@ -197,6 +207,10 @@ router.get('/me', async (req, res) => {
 
 // POST /api/auth/link-github - Link GitHub to existing Firebase auth
 router.post('/link-github', async (req, res) => {
+  if (!isGitHubAuthConfigured) {
+    return res.status(503).json({ error: 'GitHub OAuth is not configured' });
+  }
+
   const { firebaseToken } = req.body;
   
   try {

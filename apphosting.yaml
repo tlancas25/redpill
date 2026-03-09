@@ -1,0 +1,16 @@
+runConfig:
+  minInstances: 0
+  maxInstances: 10
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+scripts:
+  buildCommand: npm install --prefix server && npm run build
+  runCommand: node server/apphosting.js
+
+outputFiles:
+  serverApp:
+    include:
+      - build
+      - server

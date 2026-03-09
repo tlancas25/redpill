@@ -27,7 +27,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node server/apphosting.js",
+    "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -37,6 +38,9 @@
     "emulators": "firebase emulators:start",
     "firebase:login": "firebase login",
     "firebase:init": "firebase init"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "eslintConfig": {
     "extends": [

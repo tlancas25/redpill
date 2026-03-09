@@ -121,6 +121,11 @@ if (!sessionSecret) {
 
 const app = express();
 
+const mountRoute = (basePath, router) => {
+  app.use(basePath, router);
+  app.use(`/api${basePath}`, router);
+};
+
 // CORS configuration
 app.use(cors({
   origin: [
@@ -190,25 +195,28 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Health check
-app.get('/health', (req, res) => {
+const healthHandler = (req, res) => {
   res.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
     environment: 'production'
   });
-});
+};
+
+app.get('/health', healthHandler);
+app.get('/api/health', healthHandler);
 
 // Routes
-app.use('/auth', require('./routes/auth'));
-app.use('/products', require('./routes/products'));
-app.use('/blog', require('./routes/blog'));
-app.use('/courses', require('./routes/courses'));
-app.use('/orders', require('./routes/orders'));
-app.use('/contact', require('./routes/contact'));
-app.use('/search', require('./routes/search'));
+mountRoute('/auth', require('./routes/auth'));
+mountRoute('/products', require('./routes/products'));
+mountRoute('/blog', require('./routes/blog'));
+mountRoute('/courses', require('./routes/courses'));
+mountRoute('/orders', require('./routes/orders'));
+mountRoute('/contact', require('./routes/contact'));
+mountRoute('/search', require('./routes/search'));
 
 // Export the Express app as a Firebase Cloud Function
-exports.api = onRequest({
+const api = onRequest({
   cors: [
     'https://www.redpillreader.com',
     'https://redpillreader.com',
@@ -219,3 +227,8 @@ exports.api = onRequest({
   timeoutSeconds: 30,
   memory: '256MiB',
 }, app);
+
+module.exports = {
+  app,
+  api,
+};
