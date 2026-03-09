@@ -133,7 +133,12 @@ export const LoginPage: React.FC = () => {
 
   return (
     <>
-      <SEOHead title="Login" />
+      <SEOHead
+        title="Login"
+        description="Log in to your RedPillReader account to access your dashboard, library, and courses."
+        path="/login"
+        noindex
+      />
       <AuthContainer>
         <AuthCard>
           <Title>Welcome Back</Title>
@@ -217,7 +222,12 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <>
-      <SEOHead title="Register" />
+      <SEOHead
+        title="Register"
+        description="Create your RedPillReader account to access premium courses, digital products, and member features."
+        path="/register"
+        noindex
+      />
       <AuthContainer>
         <AuthCard>
           <Title>Take The Red Pill</Title>
@@ -296,7 +306,12 @@ export const ForgotPasswordPage: React.FC = () => {
 
   return (
     <>
-      <SEOHead title="Forgot Password" />
+      <SEOHead
+        title="Forgot Password"
+        description="Reset your RedPillReader account password."
+        path="/forgot-password"
+        noindex
+      />
       <AuthContainer>
         <AuthCard>
           <Title>Reset Password</Title>

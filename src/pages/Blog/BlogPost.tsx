@@ -308,10 +308,13 @@ const BlogPost: React.FC = () => {
 
   if (!article) {
     return (
-      <BlogPostContainer>
-        <Title>Article not found</Title>
-        <Button variant="primary" onClick={() => navigate('/blog')}>Back to Blog</Button>
-      </BlogPostContainer>
+      <>
+        <SEOHead title="Article Not Found" description="The requested article could not be found." noindex />
+        <BlogPostContainer>
+          <Title>Article not found</Title>
+          <Button variant="primary" onClick={() => navigate('/blog')}>Back to Blog</Button>
+        </BlogPostContainer>
+      </>
     );
   }
 
@@ -321,7 +324,11 @@ const BlogPost: React.FC = () => {
         title={article.title} 
         description={article.excerpt}
         image={article.featuredImage}
+        path={`/blog/${article.slug}`}
         type="article"
+        keywords={article.tags}
+        publishedTime={article.publishedAt.toISOString()}
+        modifiedTime={article.updatedAt.toISOString()}
       />
       
       <BlogPostContainer>

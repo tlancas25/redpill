@@ -228,7 +228,12 @@ const Store: React.FC = () => {
 
   return (
     <>
-      <SEOHead title="Store" description="Browse our collection of eBooks and video courses on health optimization, wealth creation, mindset reprogramming, survival, and tech sovereignty." />
+      <SEOHead
+        title="Store"
+        description="Shop RedPillReader eBooks and courses covering health optimization, wealth creation, mindset reprogramming, survival, and tech sovereignty."
+        path="/store"
+        keywords={['ebooks', 'online courses', 'biohacking books', 'wealth courses', 'survival guides']}
+      />
 
       <StoreContainer>
         <PageTitle>The Store</PageTitle>

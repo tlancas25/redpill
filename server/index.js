@@ -6,8 +6,16 @@ const passport = require('passport');
 const session = require('express-session');
 const admin = require('firebase-admin');
 
-// Initialize Firebase Admin
-admin.initializeApp();
+// Initialize Firebase Admin once across route/module imports
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
+
+const sessionSecret = process.env.SESSION_SECRET || process.env.JWT_SECRET;
+
+if (!sessionSecret) {
+  logger.warn('SESSION_SECRET or JWT_SECRET is not configured. Falling back to a development-only session secret.');
+}
 
 const app = express();
 
@@ -26,12 +34,12 @@ app.use(express.json());
 
 // Session for Passport
 app.use(session({
-  secret: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'firebase-secret-key',
+  secret: sessionSecret || 'development-only-session-secret',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: true,
-    sameSite: 'none',
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     maxAge: 24 * 60 * 60 * 1000,
   },
 }));

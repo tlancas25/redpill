@@ -135,6 +135,11 @@ const TotalRow = styled(SummaryRow)`
   margin-top: 0.75rem;
 `;
 
+const CheckoutLink = styled(Link)`
+  display: block;
+  margin-top: 1.5rem;
+`;
+
 const EmptyCart = styled.div`
   text-align: center;
   padding: 4rem 2rem;
@@ -173,7 +178,12 @@ const CartPage: React.FC = () => {
 
   return (
     <>
-      <SEOHead title="Cart" />
+      <SEOHead
+        title="Cart"
+        description="Review items in your RedPillReader cart before checkout."
+        path="/cart"
+        noindex
+      />
       <CartContainer>
         <PageTitle>Your Cart</PageTitle>
         <CartLayout>
@@ -217,11 +227,11 @@ const CartPage: React.FC = () => {
               <span>Total</span>
               <span>{formatPrice(total)}</span>
             </TotalRow>
-            <Link to="/checkout" style={{ display: 'block', marginTop: '1.5rem' }}>
+            <CheckoutLink to="/checkout">
               <Button fullWidth size="lg">
                 Proceed to Checkout
               </Button>
-            </Link>
+            </CheckoutLink>
           </Card>
         </CartLayout>
       </CartContainer>

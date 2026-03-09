@@ -199,7 +199,11 @@ const Contact: React.FC = () => {
 
   return (
     <>
-      <SEOHead title="Contact Us" description="Get in touch with the RedPillReader team. Questions, feedback, or support." />
+      <SEOHead
+        title="Contact"
+        description="Contact RedPillReader for support, billing questions, partnerships, or general inquiries."
+        path="/contact"
+      />
 
       <ContactContainer>
         <PageTitle>Connect With Us</PageTitle>

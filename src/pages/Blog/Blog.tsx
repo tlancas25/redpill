@@ -131,7 +131,12 @@ const Blog: React.FC = () => {
 
   return (
     <>
-      <SEOHead title="Blog" description="Insights, guides, and news on health, wealth, mindset, and survival for the modern sovereign individual." />
+      <SEOHead
+        title="Blog"
+        description="Read RedPillReader articles on health, wealth, mindset, privacy, survival, and technology for modern sovereign living."
+        path="/blog"
+        keywords={['blog', 'health articles', 'wealth articles', 'privacy tools', 'survival skills']}
+      />
 
       <BlogContainer>
         <PageTitle>The Blog</PageTitle>

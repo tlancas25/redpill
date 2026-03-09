@@ -192,7 +192,12 @@ const sampleCourses = [
 const Learning: React.FC = () => {
   return (
     <>
-      <SEOHead title="Learn" description="Enter The Construct - Video courses on biohacking, wealth creation, psychology, and tech mastery." />
+      <SEOHead
+        title="Learning"
+        description="Explore RedPillReader courses on biohacking, financial sovereignty, psychology, tech mastery, and survival skills."
+        path="/learn"
+        keywords={['video courses', 'biohacking course', 'financial freedom course', 'tech mastery course']}
+      />
 
       <LearningContainer>
         <HeroSection>

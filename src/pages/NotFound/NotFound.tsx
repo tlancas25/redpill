@@ -47,7 +47,7 @@ const LinksRow = styled.div`
 const NotFound: React.FC = () => {
   return (
     <>
-      <SEOHead title="404 - Page Not Found" />
+      <SEOHead title="404 - Page Not Found" description="The page you requested could not be found." noindex />
       <NotFoundContainer>
         <GlitchText
           animate={{ opacity: [1, 0.8, 1] }}

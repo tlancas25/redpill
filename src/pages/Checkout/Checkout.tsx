@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
 import styled from 'styled-components';
 import SEOHead from '../../components/shared/SEOHead';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
+import { useAuth } from '../../hooks/useAuth';
 import { useCart } from '../../hooks/useCart';
+import { createPaymentIntent, getApiBaseUrl, isStripeConfigured, stripePromise } from '../../services/stripe';
 import { formatPrice } from '../../utils/helpers';
 import { media } from '../../styles/breakpoints';
 
@@ -79,30 +82,168 @@ const SecureBadge = styled.div`
   margin-top: 1rem;
 `;
 
-const Checkout: React.FC = () => {
-  const { items, subtotal, tax, total } = useCart();
+const PaymentSectionTitle = styled(SectionTitle)`
+  margin-top: 1rem;
+`;
+
+const PaymentHint = styled.p`
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: 0.875rem;
+`;
+
+const StatusMessage = styled.p<{ $error?: boolean }>`
+  color: ${({ theme, $error }) => ($error ? theme.colors.error : theme.colors.primary)};
+  font-size: 0.875rem;
+  text-align: center;
+`;
+
+const cardElementOptions = {
+  style: {
+    base: {
+      color: '#f5f5f5',
+      fontSize: '16px',
+      '::placeholder': {
+        color: '#8a8a8a',
+      },
+    },
+    invalid: {
+      color: '#ff5f56',
+    },
+  },
+};
+
+const CheckoutForm: React.FC = () => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const { items, subtotal, tax, total, clearCart } = useCart();
+  const { user, userProfile } = useAuth();
+  const [billingName, setBillingName] = useState(userProfile?.displayName || user?.displayName || '');
+  const [billingEmail, setBillingEmail] = useState(user?.email || userProfile?.email || '');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    if (!stripe || !elements) {
+      setErrorMessage('Stripe has not finished loading. Please try again.');
+      return;
+    }
+
+    if (!billingName || !billingEmail) {
+      setErrorMessage('Billing name and email are required.');
+      return;
+    }
+
+    const cardElement = elements.getElement(CardElement);
+    if (!cardElement) {
+      setErrorMessage('Payment form is unavailable. Refresh and try again.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const { clientSecret } = await createPaymentIntent(Math.round(total * 100), 'usd', {
+        customerEmail: billingEmail,
+        itemCount: String(items.length),
+      });
+
+      const confirmation = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: billingName,
+            email: billingEmail,
+          },
+        },
+      });
+
+      if (confirmation.error) {
+        throw new Error(confirmation.error.message || 'Payment confirmation failed');
+      }
+
+      if (!confirmation.paymentIntent || confirmation.paymentIntent.status !== 'succeeded') {
+        throw new Error('Payment was not completed. Please try again.');
+      }
+
+      const orderResponse = await fetch(`${getApiBaseUrl()}/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentIntentId: confirmation.paymentIntent.id,
+          items,
+          subtotal,
+          tax,
+          total,
+          userId: user?.uid || null,
+          customer: {
+            name: billingName,
+            email: billingEmail,
+          },
+        }),
+      });
+
+      const orderResult = await orderResponse.json();
+      if (!orderResponse.ok) {
+        throw new Error(orderResult.error || 'Order confirmation failed');
+      }
+
+      clearCart();
+      setSuccessMessage(`Payment successful. Your order ${orderResult.orderId} has been recorded.`);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Payment failed');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <>
-      <SEOHead title="Checkout" />
+      <SEOHead
+        title="Secure Checkout"
+        description="Complete your RedPillReader purchase securely with Stripe."
+        path="/checkout"
+        noindex
+      />
       <CheckoutContainer>
         <PageTitle>Checkout</PageTitle>
         <CheckoutGrid>
           <div>
             <Card>
               <SectionTitle>Billing Information</SectionTitle>
-              <Form>
-                <Input label="Full Name" placeholder="John Doe" fullWidth required />
-                <Input type="email" label="Email" placeholder="your@email.com" fullWidth required />
-                <SectionTitle style={{ marginTop: '1rem' }}>Payment</SectionTitle>
+              <Form onSubmit={handleSubmit}>
+                <Input
+                  label="Full Name"
+                  placeholder="John Doe"
+                  value={billingName}
+                  onChange={(event) => setBillingName(event.target.value)}
+                  fullWidth
+                  required
+                />
+                <Input
+                  type="email"
+                  label="Email"
+                  placeholder="your@email.com"
+                  value={billingEmail}
+                  onChange={(event) => setBillingEmail(event.target.value)}
+                  fullWidth
+                  required
+                />
+                <PaymentSectionTitle>Payment</PaymentSectionTitle>
                 <CardElementWrapper>
-                  {/* Stripe CardElement will go here */}
-                  <p style={{ color: '#b3b3b3', fontSize: '0.875rem' }}>
-                    💳 Stripe Card Element (Configure with live Stripe keys)
-                  </p>
+                  <CardElement options={cardElementOptions} />
                 </CardElementWrapper>
-                <Button type="submit" fullWidth size="lg">
-                  Complete Purchase — {formatPrice(total)}
+                <PaymentHint>Payments are encrypted and processed securely by Stripe.</PaymentHint>
+                {errorMessage && <StatusMessage $error>{errorMessage}</StatusMessage>}
+                {successMessage && <StatusMessage>{successMessage}</StatusMessage>}
+                <Button type="submit" fullWidth size="lg" isLoading={isSubmitting}>
+                  Complete Purchase - {formatPrice(total)}
                 </Button>
               </Form>
             </Card>
@@ -129,12 +270,39 @@ const Checkout: React.FC = () => {
                 <span>Total</span>
                 <span>{formatPrice(total)}</span>
               </TotalRow>
-              <SecureBadge>🔒 Secured by Stripe · SSL Encrypted</SecureBadge>
+              <SecureBadge>Secured by Stripe · SSL Encrypted</SecureBadge>
             </Card>
           </div>
         </CheckoutGrid>
       </CheckoutContainer>
     </>
+  );
+};
+
+const Checkout: React.FC = () => {
+  if (!isStripeConfigured) {
+    return (
+      <>
+        <SEOHead
+          title="Secure Checkout"
+          description="Stripe is not configured yet for checkout."
+          path="/checkout"
+          noindex
+        />
+        <CheckoutContainer>
+          <PageTitle>Checkout Unavailable</PageTitle>
+          <Card>
+            <PaymentHint>Stripe publishable key is not configured for this environment.</PaymentHint>
+          </Card>
+        </CheckoutContainer>
+      </>
+    );
+  }
+
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutForm />
+    </Elements>
   );
 };
 

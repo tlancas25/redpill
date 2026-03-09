@@ -82,7 +82,12 @@ const Dashboard: React.FC = () => {
 
   return (
     <>
-      <SEOHead title="Dashboard" />
+      <SEOHead
+        title="Dashboard"
+        description="Manage your RedPillReader library, saved content, and learning progress."
+        path="/dashboard"
+        noindex
+      />
 
       <DashboardContainer>
         <WelcomeSection>

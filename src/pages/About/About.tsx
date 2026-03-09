@@ -101,7 +101,11 @@ const CTASection = styled.section`
 const About: React.FC = () => {
   return (
     <>
-      <SEOHead title="About Us" description="We Are The Architects of Awareness. Learn about the RedPillReader mission." />
+      <SEOHead
+        title="About"
+        description="Learn about the RedPillReader mission to help people build health, wealth, awareness, and sovereignty outside the mainstream script."
+        path="/about"
+      />
 
       <AboutContainer>
         <HeroSection>

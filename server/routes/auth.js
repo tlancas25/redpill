@@ -6,6 +6,14 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
+const getJwtSecret = () => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not configured');
+  }
+
+  return process.env.JWT_SECRET;
+};
+
 // Initialize Firebase Admin if not already done
 if (!admin.apps.length) {
   admin.initializeApp();
@@ -124,7 +132,7 @@ function generateToken(user) {
       githubUsername: user.githubUsername,
       role: user.role || 'user',
     },
-    process.env.JWT_SECRET || 'your-secret-key',
+    getJwtSecret(),
     { expiresIn: '7d' }
   );
 }
@@ -159,7 +167,7 @@ router.get('/me', async (req, res) => {
     }
     
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const decoded = jwt.verify(token, getJwtSecret());
     
     // Fetch fresh user data from Firestore
     const userDoc = await db.collection('users').doc(decoded.uid).get();
@@ -222,7 +230,7 @@ router.get('/github/repos', async (req, res) => {
     }
     
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const decoded = jwt.verify(token, getJwtSecret());
     
     // Fetch user from Firestore to get GitHub access token
     const userDoc = await db.collection('users').doc(decoded.uid).get();

@@ -6,7 +6,7 @@ import SEOHead from '../../components/shared/SEOHead';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import { media } from '../../styles/breakpoints';
-import { APP_TAGLINE, APP_NAME } from '../../utils/constants';
+import { APP_NAME } from '../../utils/constants';
 
 const HeroSection = styled.section`
   min-height: calc(100vh - 70px);
@@ -151,8 +151,10 @@ const Home: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Home"
-        description={`${APP_NAME} - ${APP_TAGLINE} Holistic self-improvement platform covering health, wealth, mindset, tech, and esoteric knowledge.`}
+        title="Decode the System"
+        description={`${APP_NAME} helps you master health, wealth, mindset, survival, and digital sovereignty through premium courses, articles, and digital products.`}
+        path="/"
+        keywords={['red pill', 'self-improvement', 'biohacking', 'wealth creation', 'mindset', 'digital sovereignty']}
       />
 
       {/* Hero */}

@@ -2,6 +2,7 @@
 export const APP_NAME = 'RedPillReader';
 export const APP_TAGLINE = 'Decode the System. Master the Machine. Own Your Future.';
 export const SUPPORT_EMAIL = 'support@redpillreader.com';
+export const SITE_URL = 'https://www.redpillreader.com';
 
 // Navigation
 export const NAV_LINKS = [

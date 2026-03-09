@@ -56,7 +56,7 @@ const List = styled.ul`
 // ============ PRIVACY POLICY ============
 export const PrivacyPolicyPage: React.FC = () => (
   <>
-    <SEOHead title="Privacy Policy" />
+    <SEOHead title="Privacy Policy" description="Read how RedPillReader collects, stores, and protects your personal data." path="/privacy-policy" />
     <LegalContainer>
       <PageTitle>Privacy Policy</PageTitle>
       <LastUpdated>Last updated: February 9, 2026</LastUpdated>
@@ -108,7 +108,7 @@ export const PrivacyPolicyPage: React.FC = () => (
 // ============ TERMS OF SERVICE ============
 export const TermsOfServicePage: React.FC = () => (
   <>
-    <SEOHead title="Terms of Service" />
+    <SEOHead title="Terms of Service" description="Review the terms that govern use of RedPillReader products, content, and services." path="/terms-of-service" />
     <LegalContainer>
       <PageTitle>Terms of Service</PageTitle>
       <LastUpdated>Last updated: February 9, 2026</LastUpdated>
@@ -159,7 +159,7 @@ export const TermsOfServicePage: React.FC = () => (
 // ============ REFUND POLICY ============
 export const RefundPolicyPage: React.FC = () => (
   <>
-    <SEOHead title="Refund Policy" />
+    <SEOHead title="Refund Policy" description="Understand RedPillReader refund eligibility, timelines, and processing details." path="/refund-policy" />
     <LegalContainer>
       <PageTitle>Refund Policy</PageTitle>
       <LastUpdated>Last updated: February 9, 2026</LastUpdated>
@@ -194,7 +194,7 @@ export const RefundPolicyPage: React.FC = () => (
 // ============ COOKIE POLICY ============
 export const CookiePolicyPage: React.FC = () => (
   <>
-    <SEOHead title="Cookie Policy" />
+    <SEOHead title="Cookie Policy" description="See how RedPillReader uses cookies for authentication, preferences, and analytics." path="/cookie-policy" />
     <LegalContainer>
       <PageTitle>Cookie Policy</PageTitle>
       <LastUpdated>Last updated: February 9, 2026</LastUpdated>
