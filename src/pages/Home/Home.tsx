@@ -6,7 +6,7 @@ import SEOHead from '../../components/shared/SEOHead';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import { media } from '../../styles/breakpoints';
-import { APP_TAGLINE } from '../../utils/constants';
+import { APP_TAGLINE, APP_NAME } from '../../utils/constants';
 
 const HeroSection = styled.section`
   min-height: calc(100vh - 70px);
@@ -152,7 +152,7 @@ const Home: React.FC = () => {
     <>
       <SEOHead
         title="Home"
-        description="RedPillReader - Decode the System. Master the Machine. Own Your Future. Holistic self-improvement platform covering health, wealth, mindset, tech, and esoteric knowledge."
+        description={`${APP_NAME} - ${APP_TAGLINE} Holistic self-improvement platform covering health, wealth, mindset, tech, and esoteric knowledge.`}
       />
 
       {/* Hero */}

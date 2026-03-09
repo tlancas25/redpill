@@ -154,12 +154,13 @@ const BackToTop = styled.button`
 
 const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implement newsletter signup
     setEmail('');
-    alert('Thanks for subscribing!');
+    setSubscribed(true);
   };
 
   const scrollToTop = () => {
@@ -195,7 +196,7 @@ const Footer: React.FC = () => {
             <FooterLink to="/store">Store</FooterLink>
             <FooterLink to="/blog">Blog</FooterLink>
             <FooterLink to="/learn">Learning Center</FooterLink>
-            <FooterLink to="/faq">FAQ</FooterLink>
+            <FooterLink to="/contact">Contact / FAQ</FooterLink>
           </FooterColumn>
 
           {/* Column 3: Legal */}
@@ -211,18 +212,22 @@ const Footer: React.FC = () => {
           <FooterColumn>
             <ColumnTitle>Stay Connected</ColumnTitle>
             <Tagline>Get the latest insights delivered to your inbox.</Tagline>
-            <NewsletterForm onSubmit={handleNewsletterSubmit}>
-              <NewsletterInput
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <Button type="submit" size="sm" fullWidth>
-                Subscribe
-              </Button>
-            </NewsletterForm>
+            {subscribed ? (
+              <Tagline style={{ color: '#00ff41' }}>✓ You're subscribed!</Tagline>
+            ) : (
+              <NewsletterForm onSubmit={handleNewsletterSubmit}>
+                <NewsletterInput
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <Button type="submit" size="sm" fullWidth>
+                  Subscribe
+                </Button>
+              </NewsletterForm>
+            )}
           </FooterColumn>
         </FooterGrid>
 
