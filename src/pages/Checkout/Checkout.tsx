@@ -149,7 +149,9 @@ const CheckoutForm: React.FC = () => {
     try {
       const { clientSecret } = await createPaymentIntent(Math.round(total * 100), 'usd', {
         customerEmail: billingEmail,
+        customerName: billingName,
         itemCount: String(items.length),
+        userId: user?.uid || 'guest',
       });
 
       const confirmation = await stripe.confirmCardPayment(clientSecret, {

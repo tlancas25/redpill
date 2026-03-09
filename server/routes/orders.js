@@ -10,6 +10,20 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
+const findOrderByPaymentIntentId = async (paymentIntentId) => {
+  const snapshot = await db
+    .collection('orders')
+    .where('stripePaymentIntentId', '==', paymentIntentId)
+    .limit(1)
+    .get();
+
+  if (snapshot.empty) {
+    return null;
+  }
+
+  return snapshot.docs[0];
+};
+
 const getStripeClient = () => {
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error('STRIPE_SECRET_KEY is not configured');
@@ -74,7 +88,19 @@ router.post('/', async (req, res) => {
       customerEmail: customer.email || paymentIntent.receipt_email || null,
       customerName: customer.name || null,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
+
+    const existingOrder = await findOrderByPaymentIntentId(paymentIntent.id);
+
+    if (existingOrder) {
+      await existingOrder.ref.set({
+        ...orderRecord,
+        createdAt: existingOrder.get('createdAt') || admin.firestore.FieldValue.serverTimestamp(),
+      }, { merge: true });
+
+      return res.status(200).json({ message: 'Order updated', orderId: existingOrder.id });
+    }
 
     const orderRef = await db.collection('orders').add(orderRecord);
     return res.status(201).json({ message: 'Order created', orderId: orderRef.id });
