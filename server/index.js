@@ -1,29 +1,38 @@
+const { onRequest } = require('firebase-functions/v2/https');
+const logger = require('firebase-functions/logger');
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const passport = require('passport');
 const session = require('express-session');
+const admin = require('firebase-admin');
 
-dotenv.config();
+// Initialize Firebase Admin
+admin.initializeApp();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// Middleware
+// CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [
+    'https://www.redpillreader.com',
+    'https://redpillreader.com',
+    'http://localhost:3000',
+    'http://localhost:5000',
+  ],
   credentials: true,
 }));
+
 app.use(express.json());
 
 // Session for Passport
 app.use(session({
-  secret: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'your-secret-key',
+  secret: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'firebase-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    secure: true,
+    sameSite: 'none',
+    maxAge: 24 * 60 * 60 * 1000,
   },
 }));
 
@@ -31,26 +40,40 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/products', require('./routes/products'));
-app.use('/api/blog', require('./routes/blog'));
-app.use('/api/courses', require('./routes/courses'));
-app.use('/api/orders', require('./routes/orders'));
-app.use('/api/contact', require('./routes/contact'));
-app.use('/api/search', require('./routes/search'));
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    environment: 'production'
+  });
+});
 
-// Stripe webhook
-app.post('/api/webhook', express.raw({ type: 'application/json' }), (req, res) => {
-  // TODO: Handle Stripe webhooks
+// Routes
+app.use('/auth', require('./routes/auth'));
+app.use('/products', require('./routes/products'));
+app.use('/blog', require('./routes/blog'));
+app.use('/courses', require('./routes/courses'));
+app.use('/orders', require('./routes/orders'));
+app.use('/contact', require('./routes/contact'));
+app.use('/search', require('./routes/search'));
+
+// Stripe webhook (raw body needed)
+app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  // TODO: Implement Stripe webhook handler
+  logger.info('Webhook received', { body: req.body });
   res.json({ received: true });
 });
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Export the Express app as a Firebase Cloud Function
+exports.api = onRequest({
+  cors: [
+    'https://www.redpillreader.com',
+    'https://redpillreader.com',
+    'http://localhost:3000',
+    'http://localhost:5000',
+  ],
+  maxInstances: 10,
+  timeoutSeconds: 30,
+  memory: '256MiB',
+}, app);

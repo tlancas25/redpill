@@ -30,7 +30,13 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "./deploy.sh prod",
+    "deploy:dev": "./deploy.sh dev",
+    "deploy:staging": "./deploy.sh staging",
+    "emulators": "firebase emulators:start",
+    "firebase:login": "firebase login",
+    "firebase:init": "firebase init"
   },
   "eslintConfig": {
     "extends": [
