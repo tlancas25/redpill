@@ -4,6 +4,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { GitHubAuthProvider } from './context/GitHubAuthContext';
 import GlobalStyles from './styles/GlobalStyles';
 import MainLayout from './components/layout/MainLayout';
 import ErrorBoundary from './components/shared/ErrorBoundary';
@@ -60,9 +61,10 @@ const App: React.FC = () => {
       <ThemeProvider>
         <GlobalStyles />
         <ErrorBoundary>
-          <AuthProvider>
-            <CartProvider>
-              <Router>
+          <GitHubAuthProvider>
+            <AuthProvider>
+              <CartProvider>
+                <Router>
                 <MainLayout>
                   <Suspense fallback={<Loader fullPage text="Loading..." />}>
                     <Routes>
@@ -111,8 +113,9 @@ const App: React.FC = () => {
                   </Suspense>
                 </MainLayout>
               </Router>
-            </CartProvider>
-          </AuthProvider>
+              </CartProvider>
+            </AuthProvider>
+          </GitHubAuthProvider>
         </ErrorBoundary>
       </ThemeProvider>
     </HelmetProvider>
