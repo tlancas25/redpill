@@ -5,7 +5,6 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Loader from '../../components/ui/Loader';
 import { media } from '../../styles/breakpoints';
-import { PRODUCT_CATEGORIES } from '../../utils/constants';
 import { formatPrice } from '../../utils/helpers';
 import { productsAPI } from '../../services/api';
 import { useCart } from '../../hooks/useCart';
@@ -139,6 +138,8 @@ const Store: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const productCategories = ['All', ...Array.from(new Set(products.map((product) => product.category)))];
+  const selectedCategory = productCategories.includes(activeCategory) ? activeCategory : 'All';
 
   useEffect(() => {
     fetchProducts();
@@ -158,9 +159,9 @@ const Store: React.FC = () => {
   };
 
   const filteredProducts =
-    activeCategory === 'All'
+    selectedCategory === 'All'
       ? products
-      : products.filter((p) => p.category === activeCategory);
+      : products.filter((p) => p.category === selectedCategory);
 
   const handleAddToCart = (product: Product) => {
     addToCart(product, 1);
@@ -198,10 +199,10 @@ const Store: React.FC = () => {
         <PageTitle>The Store</PageTitle>
 
         <FilterBar>
-          {PRODUCT_CATEGORIES.map((cat) => (
+          {productCategories.map((cat) => (
             <FilterButton
               key={cat}
-              $active={activeCategory === cat}
+              $active={selectedCategory === cat}
               onClick={() => setActiveCategory(cat)}
             >
               {cat}
