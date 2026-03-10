@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import SEOHead from '../../components/shared/SEOHead';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
+import Loader from '../../components/ui/Loader';
 import { media } from '../../styles/breakpoints';
 import { PRODUCT_CATEGORIES } from '../../utils/constants';
 import { formatPrice } from '../../utils/helpers';
+import { productsAPI } from '../../services/api';
 import { Product } from '../../types';
 
 const StoreContainer = styled.div`
@@ -124,115 +126,70 @@ const EmptyState = styled.div`
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
-// Sample products data
-const sampleProducts: Product[] = [
-  {
-    id: '1',
-    title: 'Biohacking 101: Optimize Your Biology',
-    slug: 'biohacking-101',
-    description: 'Learn the fundamentals of biohacking to optimize your sleep, nutrition, and cognitive performance.',
-    shortDescription: 'Master your biology and escape the sick-care system.',
-    price: 49.99,
-    salePrice: 39.99,
-    category: 'Health & Biohacking',
-    type: 'ebook',
-    images: [],
-    curriculum: [],
-    downloadUrl: '',
-    rating: 4.9,
-    reviewCount: 124,
-    createdAt: new Date(),
-    featured: true,
-  },
-  {
-    id: '2',
-    title: 'Sovereign Wealth Blueprint',
-    slug: 'sovereign-wealth-blueprint',
-    description: 'A comprehensive guide to financial engineering, credit repair, and building generational wealth.',
-    shortDescription: 'Escape the rat race and build real wealth.',
-    price: 97.00,
-    salePrice: null,
-    category: 'Wealth Creation',
-    type: 'course',
-    images: [],
-    curriculum: [],
-    downloadUrl: '',
-    rating: 5.0,
-    reviewCount: 89,
-    createdAt: new Date(),
-    featured: true,
-  },
-  {
-    id: '3',
-    title: 'The Red Pill Mindset',
-    slug: 'red-pill-mindset',
-    description: 'Deconstruct limiting beliefs and reprogram your mind for success and sovereignty.',
-    shortDescription: 'Reprogram your mind for absolute freedom.',
-    price: 29.99,
-    salePrice: null,
-    category: 'Mindset & Psychology',
-    type: 'ebook',
-    images: [],
-    curriculum: [],
-    downloadUrl: '',
-    rating: 4.8,
-    reviewCount: 215,
-    createdAt: new Date(),
-    featured: true,
-  },
-  {
-    id: '4',
-    title: 'Urban Survival Guide',
-    slug: 'urban-survival-guide',
-    description: 'Essential skills for navigating modern crises, from grid-down scenarios to supply chain disruptions.',
-    shortDescription: 'Be prepared for anything in the concrete jungle.',
-    price: 34.99,
-    salePrice: null,
-    category: 'Survival & Prep',
-    type: 'ebook',
-    images: [],
-    curriculum: [],
-    downloadUrl: '',
-    rating: 4.7,
-    reviewCount: 56,
-    createdAt: new Date(),
-    featured: false,
-  },
-  {
-    id: '5',
-    title: 'Cybersecurity Fundamentals',
-    slug: 'cybersecurity-fundamentals',
-    description: 'Master the basics of cybersecurity and protect yourself online.',
-    shortDescription: 'Learn to protect your digital identity.',
-    price: 29.99,
-    salePrice: null,
-    category: 'Cybersecurity',
-    type: 'ebook',
-    images: [],
-    curriculum: [],
-    downloadUrl: '',
-    rating: 4.8,
-    reviewCount: 42,
-    createdAt: new Date(),
-    featured: false,
-  },
-];
+const ErrorMessage = styled.div`
+  text-align: center;
+  padding: 2rem;
+  color: ${({ theme }) => theme.colors.error};
+`;
 
 const Store: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await productsAPI.getAll();
+      setProducts(response.data.products || []);
+    } catch (err) {
+      setError('Failed to load products. Please try again.');
+      console.error('Error fetching products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredProducts =
     activeCategory === 'All'
-      ? sampleProducts
-      : sampleProducts.filter((p) => p.category === activeCategory);
+      ? products
+      : products.filter((p) => p.category === activeCategory);
+
+  const handleAddToCart = (product: Product) => {
+    // Navigate to checkout with product
+    window.location.href = `/checkout?product=${product.stripePriceId}`;
+  };
+
+  if (loading) {
+    return (
+      <StoreContainer>
+        <PageTitle>The Store</PageTitle>
+        <Loader fullPage text="Loading products..." />
+      </StoreContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <StoreContainer>
+        <PageTitle>The Store</PageTitle>
+        <ErrorMessage>{error}</ErrorMessage>
+      </StoreContainer>
+    );
+  }
 
   return (
     <>
       <SEOHead
         title="Store"
-        description="Shop RedPillReader eBooks and courses covering health optimization, wealth creation, mindset reprogramming, survival, and tech sovereignty."
+        description="Shop RedPillReader eBooks and courses covering AI agents, security, trading bots, and X monetization."
         path="/store"
-        keywords={['ebooks', 'online courses', 'biohacking books', 'wealth courses', 'survival guides']}
+        keywords={['ebooks', 'online courses', 'AI agents', 'trading bots', 'X monetization']}
       />
 
       <StoreContainer>
@@ -263,7 +220,9 @@ const Store: React.FC = () => {
                       ? formatPrice(product.salePrice)
                       : formatPrice(product.price)}
                   </Price>
-                  <Button size="sm">Add to Cart</Button>
+                  <Button size="sm" onClick={() => handleAddToCart(product)}>
+                    Buy Now
+                  </Button>
                 </PriceRow>
               </Card>
             ))}
