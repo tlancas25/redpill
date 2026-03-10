@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const admin = require('firebase-admin');
 
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
+
 const db = admin.firestore();
 
 // Real products with Firebase Storage download URLs
@@ -106,6 +110,107 @@ const products = [
   },
 ];
 
+const toIsoString = (value) => {
+  if (!value) {
+    return null;
+  }
+
+  if (typeof value.toDate === 'function') {
+    return value.toDate().toISOString();
+  }
+
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  return null;
+};
+
+const normalizeProduct = (product, docId) => ({
+  id: product.id || docId,
+  title: product.title || '',
+  slug: product.slug || docId,
+  description: product.description || '',
+  shortDescription: product.shortDescription || '',
+  price: typeof product.price === 'number' ? product.price : Number(product.price || 0),
+  salePrice: product.salePrice ?? null,
+  category: product.category || 'Uncategorized',
+  type: product.type || 'ebook',
+  images: Array.isArray(product.images) ? product.images : [],
+  curriculum: Array.isArray(product.curriculum) ? product.curriculum : [],
+  stripePriceId: product.stripePriceId || null,
+  downloadUrl: product.downloadUrl || null,
+  skillUrl: product.skillUrl || null,
+  fileName: product.fileName || null,
+  skillFileName: product.skillFileName || null,
+  rating: typeof product.rating === 'number' ? product.rating : Number(product.rating || 0),
+  reviewCount: typeof product.reviewCount === 'number' ? product.reviewCount : Number(product.reviewCount || 0),
+  featured: Boolean(product.featured),
+  createdAt: toIsoString(product.createdAt) || new Date().toISOString(),
+  updatedAt: toIsoString(product.updatedAt) || toIsoString(product.createdAt) || new Date().toISOString(),
+});
+
+const sanitizePublicProduct = (product) => ({
+  ...product,
+  downloadUrl: undefined,
+  skillUrl: undefined,
+});
+
+const getProductsCollectionSnapshot = async () => {
+  const snapshot = await db.collection('products').get();
+  return snapshot.docs.map((doc) => normalizeProduct(doc.data(), doc.id));
+};
+
+const getAllProducts = async () => {
+  try {
+    const firestoreProducts = await getProductsCollectionSnapshot();
+    if (firestoreProducts.length > 0) {
+      return firestoreProducts;
+    }
+  } catch (error) {
+    console.error('Failed to load products from Firestore, using fallback data:', error);
+  }
+
+  return products;
+};
+
+const getProductById = async (id) => {
+  try {
+    const doc = await db.collection('products').doc(id).get();
+    if (doc.exists) {
+      return normalizeProduct(doc.data(), doc.id);
+    }
+
+    const snapshot = await db.collection('products').where('id', '==', id).limit(1).get();
+    if (!snapshot.empty) {
+      const match = snapshot.docs[0];
+      return normalizeProduct(match.data(), match.id);
+    }
+  } catch (error) {
+    console.error(`Failed to load product ${id} from Firestore, using fallback data:`, error);
+  }
+
+  return products.find((product) => product.id === id) || null;
+};
+
+const getProductBySlug = async (slug) => {
+  try {
+    const snapshot = await db.collection('products').where('slug', '==', slug).limit(1).get();
+    if (!snapshot.empty) {
+      const match = snapshot.docs[0];
+      return normalizeProduct(match.data(), match.id);
+    }
+  } catch (error) {
+    console.error(`Failed to load product slug ${slug} from Firestore, using fallback data:`, error);
+  }
+
+  return products.find((product) => product.slug === slug) || null;
+};
+
 // POST /api/products/:id/download - Generate download link for purchaser
 router.post('/:id/download', async (req, res) => {
   const { id } = req.params;
@@ -123,7 +228,7 @@ router.post('/:id/download', async (req, res) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    const product = products.find(p => p.id === id);
+    const product = await getProductById(id);
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
@@ -154,64 +259,55 @@ router.post('/:id/download', async (req, res) => {
 });
 
 // GET /api/products - Get all products
-router.get('/', (req, res) => {
-  // Return products without download URLs (public info only)
-  const publicProducts = products.map(p => ({
-    ...p,
-    downloadUrl: undefined,
-    skillUrl: undefined,
-  }));
-  
-  res.json({ 
+router.get('/', async (req, res) => {
+  const loadedProducts = await getAllProducts();
+  const publicProducts = loadedProducts.map(sanitizePublicProduct);
+
+  res.json({
     products: publicProducts,
-    count: products.length 
+    count: publicProducts.length,
   });
 });
 
 // GET /api/products/featured - Get featured products
-router.get('/featured', (req, res) => {
-  const featured = products.filter(p => p.featured);
-  const publicProducts = featured.map(p => ({
-    ...p,
-    downloadUrl: undefined,
-    skillUrl: undefined,
-  }));
-  
+router.get('/featured', async (req, res) => {
+  const loadedProducts = await getAllProducts();
+  const publicProducts = loadedProducts
+    .filter((product) => product.featured)
+    .map(sanitizePublicProduct);
+
   res.json({ products: publicProducts });
 });
 
 // GET /api/products/:id - Get product by ID
-router.get('/:id', (req, res) => {
-  const product = products.find(p => p.id === req.params.id);
+router.get('/:id', async (req, res) => {
+  const product = await getProductById(req.params.id);
   if (!product) {
     return res.status(404).json({ error: 'Product not found' });
   }
 
-  // Return without download URLs
-  const { downloadUrl, skillUrl, ...publicProduct } = product;
+  const publicProduct = sanitizePublicProduct(product);
   res.json({ product: publicProduct });
 });
 
 // GET /api/products/slug/:slug - Get product by slug
-router.get('/slug/:slug', (req, res) => {
-  const product = products.find(p => p.slug === req.params.slug);
+router.get('/slug/:slug', async (req, res) => {
+  const product = await getProductBySlug(req.params.slug);
   if (!product) {
     return res.status(404).json({ error: 'Product not found' });
   }
 
-  const { downloadUrl, skillUrl, ...publicProduct } = product;
+  const publicProduct = sanitizePublicProduct(product);
   res.json({ product: publicProduct });
 });
 
 // GET /api/products/category/:category - Get products by category
-router.get('/category/:category', (req, res) => {
-  const filtered = products.filter(p => p.category === req.params.category);
-  const publicProducts = filtered.map(p => ({
-    ...p,
-    downloadUrl: undefined,
-    skillUrl: undefined,
-  }));
-  
+router.get('/category/:category', async (req, res) => {
+  const loadedProducts = await getAllProducts();
+  const publicProducts = loadedProducts
+    .filter((product) => product.category === req.params.category)
+    .map(sanitizePublicProduct);
+
   res.json({ products: publicProducts });
 });
 
