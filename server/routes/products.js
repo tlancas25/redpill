@@ -130,14 +130,31 @@ const toIsoString = (value) => {
   return null;
 };
 
+const toNumber = (value, fallback = 0) => {
+  if (typeof value === 'number') {
+    return value;
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+const centsToDollars = (value) => {
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  return toNumber(value) / 100;
+};
+
 const normalizeProduct = (product, docId) => ({
   id: product.id || docId,
   title: product.title || '',
   slug: product.slug || docId,
   description: product.description || '',
   shortDescription: product.shortDescription || '',
-  price: typeof product.price === 'number' ? product.price : Number(product.price || 0),
-  salePrice: product.salePrice ?? null,
+  price: toNumber(product.price),
+  salePrice: product.salePrice === null || product.salePrice === undefined ? null : toNumber(product.salePrice),
   category: product.category || 'Uncategorized',
   type: product.type || 'ebook',
   images: Array.isArray(product.images) ? product.images : [],
@@ -156,6 +173,8 @@ const normalizeProduct = (product, docId) => ({
 
 const sanitizePublicProduct = (product) => ({
   ...product,
+  price: centsToDollars(product.price),
+  salePrice: centsToDollars(product.salePrice),
   downloadUrl: undefined,
   skillUrl: undefined,
 });
