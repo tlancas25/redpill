@@ -77,10 +77,14 @@ const ArticleImage = styled.div`
   background: ${({ theme }) => theme.colors.surfaceLight};
   border-radius: ${({ theme }) => theme.borderRadius.md};
   margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 `;
 
 const CategoryBadge = styled.span`
@@ -111,8 +115,13 @@ const ArticleExcerpt = styled.p`
 const ArticleMeta = styled.div`
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 1rem;
   font-size: 0.75rem;
+  color: ${({ theme }) => theme.colors.textSecondary};
+`;
+
+const ArticleDate = styled.span`
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
@@ -157,12 +166,16 @@ const Blog: React.FC = () => {
           {filteredArticles.map((article) => (
             <StyledLink key={article.id} to={`/blog/${article.slug}`}>
               <Card hoverable>
-                <ArticleImage>📝</ArticleImage>
+                <ArticleImage>
+                  <img src={article.featuredImage} alt={article.title} />
+                </ArticleImage>
                 <CategoryBadge>{article.category}</CategoryBadge>
                 <ArticleTitle>{article.title}</ArticleTitle>
                 <ArticleExcerpt>{article.excerpt}</ArticleExcerpt>
                 <ArticleMeta>
                   <span>{article.author.name}</span>
+                  <span>·</span>
+                  <ArticleDate>{new Date(article.publishedAt).toLocaleDateString()}</ArticleDate>
                   <span>·</span>
                   <span>{article.readTime} min read</span>
                 </ArticleMeta>

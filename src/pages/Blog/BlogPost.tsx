@@ -94,6 +94,37 @@ const FeaturedImage = styled.img`
   margin-bottom: 3rem;
 `;
 
+const AuthorCard = styled.section`
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding: 1.25rem;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  background: ${({ theme }) => theme.colors.surface};
+
+  img {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid ${({ theme }) => theme.colors.border};
+  }
+`;
+
+const AuthorName = styled.h3`
+  font-family: ${({ theme }) => theme.fonts.heading};
+  color: ${({ theme }) => theme.colors.primary};
+  margin-bottom: 0.25rem;
+`;
+
+const AuthorBio = styled.p`
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: 0.95rem;
+  line-height: 1.7;
+`;
+
 const Content = styled.div`
   color: ${({ theme }) => theme.colors.textPrimary};
   font-size: 1.125rem;
@@ -173,71 +204,78 @@ const Tag = styled.span`
 `;
 
 const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
-  // Simple markdown parser for headings, lists, blockquotes, and paragraphs
+  // Simple markdown parser for headings, ordered lists, unordered lists, blockquotes, and paragraphs
   const lines = content.split('\n');
   const elements: React.JSX.Element[] = [];
   
   let listItems: React.JSX.Element[] = [];
   let inList = false;
+  let listType: 'ul' | 'ol' | null = null;
+
+  const flushList = (key: string) => {
+    if (!inList || listItems.length === 0 || !listType) {
+      return;
+    }
+
+    if (listType === 'ol') {
+      elements.push(<ol key={key}>{listItems}</ol>);
+    } else {
+      elements.push(<ul key={key}>{listItems}</ul>);
+    }
+
+    listItems = [];
+    inList = false;
+    listType = null;
+  };
 
   lines.forEach((line, index) => {
     // Handle headings
     if (line.startsWith('# ')) {
-      if (inList) {
-        elements.push(<ul key={`ul-${index}`}>{listItems}</ul>);
-        listItems = [];
-        inList = false;
-      }
+      flushList(`list-${index}`);
       // Skip H1 since we render title separately
       return;
     }
     
     if (line.startsWith('## ')) {
-      if (inList) {
-        elements.push(<ul key={`ul-${index}`}>{listItems}</ul>);
-        listItems = [];
-        inList = false;
-      }
+      flushList(`list-${index}`);
       elements.push(<h2 key={index}>{line.replace('## ', '')}</h2>);
       return;
     }
     
     if (line.startsWith('### ')) {
-      if (inList) {
-        elements.push(<ul key={`ul-${index}`}>{listItems}</ul>);
-        listItems = [];
-        inList = false;
-      }
+      flushList(`list-${index}`);
       elements.push(<h3 key={index}>{line.replace('### ', '')}</h3>);
       return;
     }
 
     // Handle blockquotes
     if (line.startsWith('> ')) {
-      if (inList) {
-        elements.push(<ul key={`ul-${index}`}>{listItems}</ul>);
-        listItems = [];
-        inList = false;
-      }
+      flushList(`list-${index}`);
       elements.push(<blockquote key={index}>{line.replace('> ', '')}</blockquote>);
       return;
     }
     
     // Handle horizontal rule
     if (line.startsWith('---')) {
-       if (inList) {
-        elements.push(<ul key={`ul-${index}`}>{listItems}</ul>);
-        listItems = [];
-        inList = false;
-      }
+      flushList(`list-${index}`);
       elements.push(<hr key={index} />);
       return;
     }
 
     // Handle lists
-    if (line.trim().startsWith('* ') || line.trim().startsWith('- ')) {
+    const trimmedLine = line.trim();
+    const isBulletListItem = trimmedLine.startsWith('* ') || trimmedLine.startsWith('- ');
+    const orderedMatch = trimmedLine.match(/^\d+\.\s+(.*)$/);
+
+    if (isBulletListItem || orderedMatch) {
+      const nextListType = orderedMatch ? 'ol' : 'ul';
+      if (inList && listType && listType !== nextListType) {
+        flushList(`list-${index}`);
+      }
+
       inList = true;
-      const text = line.trim().substring(2);
+      listType = nextListType;
+      const text = orderedMatch ? orderedMatch[1] : trimmedLine.substring(2);
       // Handle bold text in list items
       const parts = text.split(/(\*\*.*?\*\*)/g);
       const formattedText = parts.map((part, i) => {
@@ -253,20 +291,14 @@ const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
     
     // Close list if we hit a non-list line
     if (inList && line.trim() === '') {
-      elements.push(<ul key={`ul-${index}`}>{listItems}</ul>);
-      listItems = [];
-      inList = false;
+      flushList(`list-${index}`);
       return;
     }
 
     // Handle paragraphs
     if (line.trim() !== '') {
       if (inList) {
-        // If we are still in a list but hit text, maybe it's part of the list item or a new paragraph?
-        // Let's close the list to be safe.
-        elements.push(<ul key={`ul-${index}`}>{listItems}</ul>);
-        listItems = [];
-        inList = false;
+        flushList(`list-${index}`);
       }
       
       // Handle bold text
@@ -286,9 +318,7 @@ const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
   });
   
   // Flush remaining list items
-  if (inList) {
-    elements.push(<ul key="ul-end">{listItems}</ul>);
-  }
+  flushList('list-end');
 
   return <>{elements}</>;
 };
@@ -355,6 +385,14 @@ const BlogPost: React.FC = () => {
         <Content>
           <MarkdownRenderer content={article.content} />
         </Content>
+
+        <AuthorCard>
+          <img src={article.author.avatar} alt={article.author.name} />
+          <div>
+            <AuthorName>{article.author.name}</AuthorName>
+            <AuthorBio>{article.author.bio}</AuthorBio>
+          </div>
+        </AuthorCard>
         
         <TagsContainer>
           {article.tags.map(tag => (
