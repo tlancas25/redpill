@@ -14,6 +14,7 @@ import Loader from './components/ui/Loader';
 // Lazy-loaded pages for code splitting
 const Home = lazy(() => import('./pages/Home'));
 const Store = lazy(() => import('./pages/Store'));
+const ProductDetail = lazy(() => import('./pages/Store').then(module => ({ default: module.ProductDetail })));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/Blog').then(module => ({ default: module.BlogPost })));
 const Learning = lazy(() => import('./pages/Learning'));
@@ -71,6 +72,7 @@ const App: React.FC = () => {
                       {/* Public Routes */}
                       <Route path="/" element={<Home />} />
                       <Route path="/store" element={<Store />} />
+                      <Route path="/store/:slug" element={<ProductDetail />} />
                       <Route path="/blog" element={<Blog />} />
                       <Route path="/blog/:slug" element={<BlogPost />} />
                       <Route path="/learn" element={<Learning />} />

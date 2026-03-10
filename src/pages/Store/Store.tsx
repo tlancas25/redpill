@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import SEOHead from '../../components/shared/SEOHead';
 import Card from '../../components/ui/Card';
@@ -214,9 +215,13 @@ const Store: React.FC = () => {
           <ProductGrid>
             {filteredProducts.map((product) => (
               <Card key={product.id} hoverable>
-                <ProductImage>📚</ProductImage>
-                <ProductTitle>{product.title}</ProductTitle>
-                <ProductDesc>{product.shortDescription}</ProductDesc>
+                <Link to={`/store/${product.slug}`} style={{ textDecoration: 'none' }}>
+                  <ProductImage>
+                    {product.type === 'course' ? '🎓' : '📘'}
+                  </ProductImage>
+                  <ProductTitle>{product.title}</ProductTitle>
+                  <ProductDesc>{product.shortDescription}</ProductDesc>
+                </Link>
                 <PriceRow>
                   <Price>
                     {product.salePrice
