@@ -28,6 +28,7 @@ export interface Product {
   slug: string;
   description: string;
   shortDescription: string;
+  stripePriceId?: string;
   price: number;
   salePrice: number | null;
   category: string;

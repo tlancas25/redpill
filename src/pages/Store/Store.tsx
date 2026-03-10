@@ -8,6 +8,7 @@ import { media } from '../../styles/breakpoints';
 import { PRODUCT_CATEGORIES } from '../../utils/constants';
 import { formatPrice } from '../../utils/helpers';
 import { productsAPI } from '../../services/api';
+import { useCart } from '../../hooks/useCart';
 import { Product } from '../../types';
 
 const StoreContainer = styled.div`
@@ -133,6 +134,7 @@ const ErrorMessage = styled.div`
 `;
 
 const Store: React.FC = () => {
+  const { addToCart } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -161,8 +163,8 @@ const Store: React.FC = () => {
       : products.filter((p) => p.category === activeCategory);
 
   const handleAddToCart = (product: Product) => {
-    // Navigate to checkout with product
-    window.location.href = `/checkout?product=${product.stripePriceId}`;
+    addToCart(product, 1);
+    window.location.href = '/checkout';
   };
 
   if (loading) {
