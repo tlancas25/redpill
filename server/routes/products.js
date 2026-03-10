@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const admin = require('firebase-admin');
 
-// Real products data (Stripe connected)
+const db = admin.firestore();
+
+// Real products with Firebase Storage download URLs
 const products = [
   {
     id: 'openclaw-masterclass',
@@ -22,6 +25,7 @@ const products = [
       { title: 'Module 5: Deploy to X - Be Your Own Bot', duration: 40 },
     ],
     stripePriceId: 'price_1T9DnSRpLFWUKDnHi3HELdZo',
+    downloadUrl: null, // Coming soon
     rating: 0,
     reviewCount: 0,
     featured: true,
@@ -31,7 +35,7 @@ const products = [
     id: 'agent-security-field-guide',
     title: 'Agent Security Field Guide',
     slug: 'agent-security-field-guide',
-    description: 'A practical guide to securing your AI agents. Threat models, audits, and weekly rituals to keep your operations safe.',
+    description: 'A practical guide to securing your AI agents. Threat models, shadow IT audits, and weekly security rituals. 45 pages of actionable security protocols.',
     shortDescription: 'Threat models, audits, and weekly security rituals.',
     price: 2700,
     salePrice: null,
@@ -40,6 +44,8 @@ const products = [
     images: ['/images/products/agent-security.jpg'],
     curriculum: [],
     stripePriceId: 'price_1T9DntRpLFWUKDnHsZ7cKk83',
+    downloadUrl: 'https://firebasestorage.googleapis.com/v0/b/redpillreader-249ec.firebasestorage.app/o/dowloads%2FAgent_Security_Field_Guide_OpenClaw.pdf?alt=media&token=4f7c3f4b-1db0-4d15-835c-e1b8501a76e5',
+    fileName: 'Agent_Security_Field_Guide_OpenClaw.pdf',
     rating: 0,
     reviewCount: 0,
     featured: true,
@@ -49,21 +55,25 @@ const products = [
     id: 'trading-bot-blueprint',
     title: 'Trading Bot Blueprint',
     slug: 'trading-bot-blueprint',
-    description: 'Build automated trading bots with Alpaca. From paper trading to live deployment with proper risk management.',
-    shortDescription: 'Build trading bots. Paper to live with risk controls.',
+    description: 'Build automated trading bots with Alpaca and OpenClaw. 49-page blueprint plus complete Dominator Trader agent skill. Paper trading enforced.',
+    shortDescription: '49-page blueprint + Dominator Trader agent skill.',
     price: 9700,
     salePrice: null,
     category: 'Finance & Trading',
     type: 'course',
     images: ['/images/products/trading-bot.jpg'],
     curriculum: [
-      { title: 'Market Making vs Directional', duration: 25 },
-      { title: 'Alpaca Setup + Paper Trading', duration: 35 },
-      { title: 'Mean Reversion Bot Build', duration: 50 },
-      { title: 'Risk Management Systems', duration: 40 },
-      { title: 'Live Deploy Psychology', duration: 30 },
+      { title: 'Dominator Architecture', duration: 25 },
+      { title: '7-Engine System Design', duration: 35 },
+      { title: 'Risk Management & Kill Switches', duration: 50 },
+      { title: 'Paper Trading Phase', duration: 40 },
+      { title: 'Live Deployment Checklist', duration: 30 },
     ],
     stripePriceId: 'price_1T9DnuRpLFWUKDnHT4WjjoZn',
+    downloadUrl: 'https://firebasestorage.googleapis.com/v0/b/redpillreader-249ec.firebasestorage.app/o/dowloads%2FTrading_Bot_Blueprint_OpenClaw.pdf?alt=media&token=47589418-e11a-4a3b-af89-10b416a0caa5',
+    skillUrl: 'https://firebasestorage.googleapis.com/v0/b/redpillreader-249ec.firebasestorage.app/o/dowloads%2FTrading_Bot_Blueprint_OpenClaw_SKILL.zip?alt=media&token=b1c6459b-939d-430e-8e86-d5124227b590',
+    fileName: 'Trading_Bot_Blueprint_OpenClaw.pdf',
+    skillFileName: 'Trading_Bot_Blueprint_OpenClaw_SKILL.zip',
     rating: 0,
     reviewCount: 0,
     featured: true,
@@ -73,7 +83,7 @@ const products = [
     id: 'x-monetization-system',
     title: 'X Monetization System',
     slug: 'x-monetization-system',
-    description: 'Turn your X following into revenue. Content systems, product creation, and Stripe integration for sustainable income.',
+    description: 'Turn your X following into revenue. Content systems, product creation, and Stripe integration for sustainable income without viral lottery.',
     shortDescription: 'Content → Cash. No viral lottery required.',
     price: 6700,
     salePrice: null,
@@ -88,6 +98,7 @@ const products = [
       { title: 'Automation & Analytics', duration: 25 },
     ],
     stripePriceId: 'price_1T9DnuRpLFWUKDnHzY6OZ0zG',
+    downloadUrl: null, // Coming soon
     rating: 0,
     reviewCount: 0,
     featured: true,
@@ -95,10 +106,64 @@ const products = [
   },
 ];
 
+// POST /api/products/:id/download - Generate download link for purchaser
+router.post('/:id/download', async (req, res) => {
+  const { id } = req.params;
+  const { userId, orderId } = req.body;
+
+  try {
+    // Verify purchase exists
+    const orderDoc = await db.collection('orders').doc(orderId).get();
+    if (!orderDoc.exists) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    const order = orderDoc.data();
+    if (order.userId !== userId || order.status !== 'completed') {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const product = products.find(p => p.id === id);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    if (!product.downloadUrl) {
+      return res.status(404).json({ error: 'Download not available yet' });
+    }
+
+    // Log download
+    await db.collection('downloads').add({
+      userId,
+      orderId,
+      productId: id,
+      downloadedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    res.json({
+      downloadUrl: product.downloadUrl,
+      skillUrl: product.skillUrl || null,
+      fileName: product.fileName,
+      skillFileName: product.skillFileName || null,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
+    });
+  } catch (error) {
+    console.error('Download error:', error);
+    res.status(500).json({ error: 'Failed to generate download' });
+  }
+});
+
 // GET /api/products - Get all products
 router.get('/', (req, res) => {
+  // Return products without download URLs (public info only)
+  const publicProducts = products.map(p => ({
+    ...p,
+    downloadUrl: undefined,
+    skillUrl: undefined,
+  }));
+  
   res.json({ 
-    products,
+    products: publicProducts,
     count: products.length 
   });
 });
@@ -106,7 +171,13 @@ router.get('/', (req, res) => {
 // GET /api/products/featured - Get featured products
 router.get('/featured', (req, res) => {
   const featured = products.filter(p => p.featured);
-  res.json({ products: featured });
+  const publicProducts = featured.map(p => ({
+    ...p,
+    downloadUrl: undefined,
+    skillUrl: undefined,
+  }));
+  
+  res.json({ products: publicProducts });
 });
 
 // GET /api/products/:id - Get product by ID
@@ -115,7 +186,10 @@ router.get('/:id', (req, res) => {
   if (!product) {
     return res.status(404).json({ error: 'Product not found' });
   }
-  res.json({ product });
+
+  // Return without download URLs
+  const { downloadUrl, skillUrl, ...publicProduct } = product;
+  res.json({ product: publicProduct });
 });
 
 // GET /api/products/slug/:slug - Get product by slug
@@ -124,13 +198,21 @@ router.get('/slug/:slug', (req, res) => {
   if (!product) {
     return res.status(404).json({ error: 'Product not found' });
   }
-  res.json({ product });
+
+  const { downloadUrl, skillUrl, ...publicProduct } = product;
+  res.json({ product: publicProduct });
 });
 
 // GET /api/products/category/:category - Get products by category
 router.get('/category/:category', (req, res) => {
   const filtered = products.filter(p => p.category === req.params.category);
-  res.json({ products: filtered });
+  const publicProducts = filtered.map(p => ({
+    ...p,
+    downloadUrl: undefined,
+    skillUrl: undefined,
+  }));
+  
+  res.json({ products: publicProducts });
 });
 
 module.exports = router;
