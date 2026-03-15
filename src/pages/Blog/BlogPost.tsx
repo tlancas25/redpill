@@ -207,10 +207,39 @@ const Tag = styled.span`
 `;
 
 const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
+  // Parse inline formatting: bold, italic, and links
+  const parseInline = (text: string, keyPrefix: string = ''): React.ReactNode[] => {
+    // Split on bold, italic, and markdown links [text](url)
+    const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|\[.*?\]\(.*?\))/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={`${keyPrefix}-${i}`}>{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith('*') && part.endsWith('*') && !part.startsWith('**')) {
+        return <em key={`${keyPrefix}-${i}`}>{part.slice(1, -1)}</em>;
+      }
+      const linkMatch = part.match(/^\[(.*?)\]\((.*?)\)$/);
+      if (linkMatch) {
+        const [, linkText, url] = linkMatch;
+        const isExternal = url.startsWith('http');
+        return (
+          <a
+            key={`${keyPrefix}-${i}`}
+            href={url}
+            {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            {linkText}
+          </a>
+        );
+      }
+      return part;
+    });
+  };
+
   // Simple markdown parser for headings, ordered lists, unordered lists, blockquotes, and paragraphs
   const lines = content.split('\n');
   const elements: React.JSX.Element[] = [];
-  
+
   let listItems: React.JSX.Element[] = [];
   let inList = false;
   let listType: 'ul' | 'ol' | null = null;
@@ -241,20 +270,20 @@ const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
     
     if (line.startsWith('## ')) {
       flushList(`list-${index}`);
-      elements.push(<h2 key={index}>{line.replace('## ', '')}</h2>);
+      elements.push(<h2 key={index}>{parseInline(line.replace('## ', ''), `h2-${index}`)}</h2>);
       return;
     }
-    
+
     if (line.startsWith('### ')) {
       flushList(`list-${index}`);
-      elements.push(<h3 key={index}>{line.replace('### ', '')}</h3>);
+      elements.push(<h3 key={index}>{parseInline(line.replace('### ', ''), `h3-${index}`)}</h3>);
       return;
     }
 
     // Handle blockquotes
     if (line.startsWith('> ')) {
       flushList(`list-${index}`);
-      elements.push(<blockquote key={index}>{line.replace('> ', '')}</blockquote>);
+      elements.push(<blockquote key={index}>{parseInline(line.replace('> ', ''), `bq-${index}`)}</blockquote>);
       return;
     }
     
@@ -279,16 +308,7 @@ const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
       inList = true;
       listType = nextListType;
       const text = orderedMatch ? orderedMatch[1] : trimmedLine.substring(2);
-      // Handle bold text in list items
-      const parts = text.split(/(\*\*.*?\*\*)/g);
-      const formattedText = parts.map((part, i) => {
-        if (part.startsWith('**') && part.endsWith('**')) {
-          return <strong key={i}>{part.slice(2, -2)}</strong>;
-        }
-        return part;
-      });
-      
-      listItems.push(<li key={index}>{formattedText}</li>);
+      listItems.push(<li key={index}>{parseInline(text, `li-${index}`)}</li>);
       return;
     }
     
@@ -304,19 +324,7 @@ const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
         flushList(`list-${index}`);
       }
       
-      // Handle bold text
-      const parts = line.split(/(\*\*.*?\*\*|\*.*?\*)/g);
-      const formattedLine = parts.map((part, i) => {
-        if (part.startsWith('**') && part.endsWith('**')) {
-          return <strong key={i}>{part.slice(2, -2)}</strong>;
-        }
-         if (part.startsWith('*') && part.endsWith('*')) {
-          return <em key={i}>{part.slice(1, -1)}</em>;
-        }
-        return part;
-      });
-      
-      elements.push(<p key={index}>{formattedLine}</p>);
+      elements.push(<p key={index}>{parseInline(line, `p-${index}`)}</p>);
     }
   });
   

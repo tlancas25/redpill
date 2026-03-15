@@ -501,19 +501,6 @@ const CTAText = styled.p`
   font-size: 1rem;
 `;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ErrorContainer = styled.div`
-  text-align: center;
-  padding: 4rem 2rem;
-  color: ${({ theme }) => theme.colors.textSecondary};
-
-  h2 {
-    font-family: ${({ theme }) => theme.fonts.heading};
-    color: ${({ theme }) => theme.colors.textPrimary};
-    margin-bottom: 1rem;
-  }
-`;
-
 /* ── Animation variants ── */
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
