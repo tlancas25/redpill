@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import { motion, useInView } from 'framer-motion';
 import SEOHead from '../../components/shared/SEOHead';
+import StructuredData from '../../components/shared/StructuredData';
+import { buildOrganizationSchema, buildWebSiteSchema } from '../../utils/structuredData';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import { media } from '../../styles/breakpoints';
@@ -791,6 +793,7 @@ const Home: React.FC = () => {
         path="/"
         keywords={['red pill', 'self-improvement', 'biohacking', 'wealth creation', 'mindset', 'digital sovereignty']}
       />
+      <StructuredData data={[buildOrganizationSchema(), buildWebSiteSchema()]} />
 
       {/* Hero */}
       <HeroSection>

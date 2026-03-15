@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import SEOHead from '../../components/shared/SEOHead';
+import StructuredData from '../../components/shared/StructuredData';
+import { buildOrganizationSchema, buildBreadcrumbSchema } from '../../utils/structuredData';
+import { SITE_URL } from '../../utils/constants';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { media } from '../../styles/breakpoints';
@@ -106,6 +109,13 @@ const About: React.FC = () => {
         description="Learn about the RedPillReader mission to help people build health, wealth, awareness, and sovereignty outside the mainstream script."
         path="/about"
       />
+      <StructuredData data={[
+        buildOrganizationSchema(),
+        buildBreadcrumbSchema([
+          { name: 'Home', url: SITE_URL },
+          { name: 'About', url: `${SITE_URL}/about` },
+        ]),
+      ]} />
 
       <AboutContainer>
         <HeroSection>

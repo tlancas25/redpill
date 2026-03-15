@@ -12,6 +12,8 @@ interface SEOHeadProps {
   keywords?: string[];
   publishedTime?: string;
   modifiedTime?: string;
+  author?: string;
+  section?: string;
 }
 
 const NOINDEX_PATHS = [/^\/login$/, /^\/register$/, /^\/forgot-password$/, /^\/dashboard$/, /^\/cart$/, /^\/checkout$/];
@@ -35,6 +37,8 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   keywords,
   publishedTime,
   modifiedTime,
+  author,
+  section,
 }) => {
   const currentPath = typeof window !== 'undefined'
     ? `${window.location.pathname}${window.location.search}`
@@ -66,9 +70,15 @@ const SEOHead: React.FC<SEOHeadProps> = ({
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content="@redpillreader" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={imageUrl} />
+
+      {/* Additional Meta */}
+      <meta property="og:locale" content="en_US" />
+      {author && <meta property="article:author" content={author} />}
+      {section && <meta property="article:section" content={section} />}
 
       {/* Canonical */}
       <link rel="canonical" href={canonicalUrl} />

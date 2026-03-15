@@ -2,6 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import SEOHead from '../../components/shared/SEOHead';
+import StructuredData from '../../components/shared/StructuredData';
+import { buildItemListSchema, buildOrganizationSchema } from '../../utils/structuredData';
+import { SITE_URL } from '../../utils/constants';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { media } from '../../styles/breakpoints';
@@ -198,6 +201,10 @@ const Learning: React.FC = () => {
         path="/learn"
         keywords={['video courses', 'biohacking course', 'financial freedom course', 'tech mastery course']}
       />
+      <StructuredData data={[
+        buildItemListSchema('RedPillReader Courses', sampleCourses.map(c => ({ name: c.title, url: `${SITE_URL}/learn/course/${c.slug}` }))),
+        buildOrganizationSchema(),
+      ]} />
 
       <LearningContainer>
         <HeroSection>

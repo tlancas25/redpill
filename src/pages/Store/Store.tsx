@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import SEOHead from '../../components/shared/SEOHead';
+import StructuredData from '../../components/shared/StructuredData';
+import { buildItemListSchema, buildOrganizationSchema } from '../../utils/structuredData';
+import { SITE_URL } from '../../utils/constants';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Loader from '../../components/ui/Loader';
@@ -440,6 +443,10 @@ const Store: React.FC = () => {
         path="/store"
         keywords={['ebooks', 'online courses', 'AI agents', 'trading bots', 'X monetization']}
       />
+      <StructuredData data={[
+        buildItemListSchema('RedPillReader Products', products.map(p => ({ name: p.title, url: `${SITE_URL}/store/${p.slug}` }))),
+        buildOrganizationSchema(),
+      ]} />
 
       <StoreHero>
         <PageTitle>The Arsenal</PageTitle>

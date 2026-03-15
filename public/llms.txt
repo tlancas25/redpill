@@ -1,0 +1,47 @@
+# RedPillReader
+
+> Decode the System. Master the Machine. Own Your Future.
+
+RedPillReader is an online education and media platform delivering courses, articles, and digital products on cybersecurity, biohacking, financial sovereignty, digital privacy, mindset development, and urban survival. Over 1,100 students enrolled across all courses.
+
+## Courses
+
+- [Complete Cybersecurity Bootcamp](https://www.redpillreader.com/learn/course/cybersecurity-bootcamp): 30-lesson hands-on cybersecurity course covering Nmap, Wireshark, Metasploit, OWASP Top 10, and bug bounty methodology. $49.99. 4.8/5 rating from 234+ students.
+- [Biohacking for Peak Performance](https://www.redpillreader.com/learn/course/biohacking-peak-performance): 25-lesson course on circadian rhythm hacking, intermittent fasting, cold exposure, nootropic stacking, HRV training, and longevity science. $79.99. 4.9/5 rating from 342+ students.
+- [Financial Sovereignty Masterclass](https://www.redpillreader.com/learn/course/financial-sovereignty-masterclass): 45-lesson advanced course on DeFi, credit optimization (800+ blueprint), LLC/trust structures, passive income streams, and generational wealth building. $99.99. 5.0/5 rating from 567+ students.
+
+## Blog Articles
+
+- [The Focus Trap: Deep Work in an Age of Distraction](https://www.redpillreader.com/blog/top-10-biohacks-cognitive): Evidence-based biohacking strategies for cognitive performance including BDNF research and nootropic protocols.
+- [The Psychology of the Matrix](https://www.redpillreader.com/blog/psychology-of-matrix): Breaking down social conditioning, herd behavior, and cognitive dissonance for independent thinkers.
+- [Building Generational Wealth in 2026](https://www.redpillreader.com/blog/generational-wealth-2026): The 3-Bucket System for building a resilient personal balance sheet with distribution assets and skill stacking.
+- [5 Essential Privacy Tools Everyone Needs](https://www.redpillreader.com/blog/5-essential-privacy-tools): Minimal privacy stack covering VPN, Signal, password managers, private search, and OSINT protection.
+- [Urban Survival: Bug In or Bug Out?](https://www.redpillreader.com/blog/urban-survival-bug-in-out): Decision framework for crisis preparedness with logistics and resilience planning.
+- [OpenClaw Context Saver: AI Agent Token Optimization](https://www.redpillreader.com/blog/openclaw-context-saver-ai-agent-token-optimization): Technical deep-dive on 70-98% token reduction for self-hosted AI agents.
+
+## Topics Covered
+
+- Cybersecurity & Ethical Hacking
+- Biohacking & Cognitive Performance
+- Financial Sovereignty & Wealth Creation
+- Digital Privacy & Security Tools
+- Mindset & Psychology
+- Urban Survival & Preparedness
+- Tech Literacy & Digital Sovereignty
+- AI Agent Optimization
+
+## Key Pages
+
+- [All Courses](https://www.redpillreader.com/learn)
+- [Blog](https://www.redpillreader.com/blog)
+- [Store](https://www.redpillreader.com/store)
+- [About](https://www.redpillreader.com/about)
+- [Contact & FAQ](https://www.redpillreader.com/contact)
+- [Knowledge Base](https://www.redpillreader.com/info)
+
+## Contact
+
+- Email: support@redpillreader.com
+- Twitter: https://twitter.com/redpillreader
+- YouTube: https://youtube.com/@redpillreader
+- Discord: https://discord.gg/redpillreader

@@ -8,4 +8,27 @@ Disallow: /dashboard
 Disallow: /cart
 Disallow: /checkout
 
+# AI Crawlers — Welcome
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
 Sitemap: https://www.redpillreader.com/sitemap.xml
+
+# LLM Crawler Information
+# See https://llmstxt.org
+# llms.txt: https://www.redpillreader.com/llms.txt

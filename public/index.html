@@ -31,6 +31,38 @@
       rel="stylesheet"
     />
     <title>RedPillReader | Decode the System. Master the Machine. Own Your Future.</title>
+
+    <!-- Google Analytics 4 -->
+    <script>
+      (function() {
+        var id = '%REACT_APP_GA4_MEASUREMENT_ID%';
+        if (!id || id.indexOf('REACT_APP') !== -1) return;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', id);
+      })();
+    </script>
+
+    <!-- Meta Pixel -->
+    <script>
+      (function() {
+        var id = '%REACT_APP_META_PIXEL_ID%';
+        if (!id || id.indexOf('REACT_APP') !== -1) return;
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+        document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', id);
+        fbq('track', 'PageView');
+      })();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

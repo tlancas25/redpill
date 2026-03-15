@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import SEOHead from '../../components/shared/SEOHead';
+import StructuredData from '../../components/shared/StructuredData';
+import { buildFAQPageSchema, buildBreadcrumbSchema, buildOrganizationSchema } from '../../utils/structuredData';
+import { SITE_URL } from '../../utils/constants';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
@@ -204,6 +207,19 @@ const Contact: React.FC = () => {
         description="Contact RedPillReader for support, billing questions, partnerships, or general inquiries."
         path="/contact"
       />
+      <StructuredData data={[
+        buildFAQPageSchema([
+          { question: 'How do I access my purchased courses?', answer: 'After purchase, log in to your RedPillReader dashboard. All courses appear in your "My Library" section with instant access.' },
+          { question: 'What is your refund policy?', answer: 'We offer a 30-day money-back guarantee on all courses and digital products. Contact support@redpillreader.com for refund requests.' },
+          { question: 'How do I reset my password?', answer: 'Click "Forgot Password" on the login page. You will receive a reset link via email within minutes.' },
+          { question: 'Do you offer discounts?', answer: 'We run periodic promotions and bundle deals. Follow us on Twitter @redpillreader or join our Discord for exclusive discount codes.' },
+        ]),
+        buildBreadcrumbSchema([
+          { name: 'Home', url: SITE_URL },
+          { name: 'Contact', url: `${SITE_URL}/contact` },
+        ]),
+        buildOrganizationSchema(),
+      ]} />
 
       <ContactContainer>
         <PageTitle>Connect With Us</PageTitle>

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../../hooks/useAuth';
 import { useCart } from '../../../hooks/useCart';
+import { useThemeContext } from '../../../context/ThemeContext';
 import { NAV_LINKS } from '../../../utils/constants';
 import { media } from '../../../styles/breakpoints';
 
@@ -208,12 +209,45 @@ const MobileClose = styled.button`
   }
 `;
 
+const ThemeToggleButton = styled.button`
+  background: none;
+  border: none;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+const MobileThemeToggle = styled.button`
+  background: none;
+  border: none;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  font-family: ${({ theme }) => theme.fonts.heading};
+  font-size: 1.5rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
 const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const { isAuthenticated } = useAuth();
   const { getItemCount } = useCart();
+  const { mode, toggleTheme } = useThemeContext();
   const itemCount = getItemCount();
 
   useEffect(() => {
@@ -247,6 +281,9 @@ const Navbar: React.FC = () => {
           </DesktopNav>
 
           <NavActions>
+            <ThemeToggleButton onClick={toggleTheme} aria-label="Toggle theme">
+              {mode === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19'}
+            </ThemeToggleButton>
             <CartButton to="/cart">
               🛒
               {itemCount > 0 && <CartBadge>{itemCount}</CartBadge>}
@@ -278,6 +315,9 @@ const Navbar: React.FC = () => {
                 {link.label}
               </MobileNavLink>
             ))}
+            <MobileThemeToggle onClick={toggleTheme}>
+              {mode === 'dark' ? '\u2600\uFE0F Light' : '\uD83C\uDF19 Dark'}
+            </MobileThemeToggle>
             <MobileNavLink to="/cart">Cart {itemCount > 0 && `(${itemCount})`}</MobileNavLink>
             {isAuthenticated ? (
               <MobileNavLink to="/dashboard">Dashboard</MobileNavLink>

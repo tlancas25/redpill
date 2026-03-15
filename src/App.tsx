@@ -19,6 +19,7 @@ const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/Blog').then(module => ({ default: module.BlogPost })));
 const Learning = lazy(() => import('./pages/Learning'));
 const CourseDetail = lazy(() => import('./pages/Learning').then(module => ({ default: module.CourseDetail })));
+const AIInfo = lazy(() => import('./pages/AIInfo'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -78,6 +79,7 @@ const App: React.FC = () => {
                       <Route path="/blog/:slug" element={<BlogPost />} />
                       <Route path="/learn" element={<Learning />} />
                       <Route path="/learn/course/:slug" element={<CourseDetail />} />
+                      <Route path="/info" element={<AIInfo />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/cart" element={<CartPage />} />

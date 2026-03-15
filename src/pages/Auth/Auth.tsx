@@ -97,9 +97,31 @@ const BottomLink = styled.p`
 `;
 
 const ErrorText = styled.p`
-  color: ${({ theme }) => theme.colors.error};
+  color: ${({ theme }) => theme.colors.accent};
   font-size: 0.875rem;
   text-align: center;
+  background: rgba(255, 51, 51, 0.08);
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+`;
+
+const SuccessText = styled.p`
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: 0.875rem;
+  text-align: center;
+  background: rgba(0, 255, 65, 0.08);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+`;
+
+const PasswordHint = styled.p`
+  font-size: 0.75rem;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  margin-top: -0.5rem;
 `;
 
 // ============ LOGIN ============
@@ -198,8 +220,17 @@ export const RegisterPage: React.FC = () => {
     e.preventDefault();
     setFormError('');
 
+    // Password validation
+    if (password.length < 8) {
+      setFormError('Password must be at least 8 characters long.');
+      return;
+    }
+    if (!/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+      setFormError('Password must contain both letters and numbers.');
+      return;
+    }
     if (password !== confirmPassword) {
-      setFormError('Passwords do not match');
+      setFormError('Passwords do not match.');
       return;
     }
 
@@ -208,7 +239,7 @@ export const RegisterPage: React.FC = () => {
       await register(email, password, name);
       navigate('/dashboard');
     } catch {
-      // Error handled by auth context
+      // Error displayed via useAuth error state
     }
     setFormLoading(false);
   };
@@ -217,7 +248,9 @@ export const RegisterPage: React.FC = () => {
     try {
       await googleLogin();
       navigate('/dashboard');
-    } catch {}
+    } catch {
+      // Error displayed via useAuth error state
+    }
   };
 
   return (
@@ -261,6 +294,7 @@ export const RegisterPage: React.FC = () => {
               fullWidth
               required
             />
+            <PasswordHint>Must be 8+ characters with letters and numbers.</PasswordHint>
             <Input
               type="password"
               label="Confirm Password"
@@ -300,7 +334,9 @@ export const ForgotPasswordPage: React.FC = () => {
     try {
       await resetPassword(email);
       setSent(true);
-    } catch {}
+    } catch {
+      // Error handled by auth context
+    }
     setFormLoading(false);
   };
 
@@ -316,10 +352,13 @@ export const ForgotPasswordPage: React.FC = () => {
         <AuthCard>
           <Title>Reset Password</Title>
           <Subtitle>
-            {sent
-              ? 'Check your email for a reset link.'
-              : 'Enter your email to receive a password reset link.'}
+            {!sent && 'Enter your email to receive a password reset link.'}
           </Subtitle>
+          {sent && (
+            <SuccessText>
+              Reset link sent! Check your inbox (and spam folder) for an email from us.
+            </SuccessText>
+          )}
           {error && <ErrorText>{error}</ErrorText>}
           {!sent && (
             <Form onSubmit={handleSubmit}>

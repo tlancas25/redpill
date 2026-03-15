@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import SEOHead from '../../components/shared/SEOHead';
+import StructuredData from '../../components/shared/StructuredData';
+import { buildItemListSchema, buildOrganizationSchema } from '../../utils/structuredData';
+import { SITE_URL } from '../../utils/constants';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { media } from '../../styles/breakpoints';
@@ -462,6 +465,10 @@ const Blog: React.FC = () => {
         path="/blog"
         keywords={['blog', 'health articles', 'wealth articles', 'privacy tools', 'survival skills']}
       />
+      <StructuredData data={[
+        buildItemListSchema('RedPillReader Blog Articles', articles.map(a => ({ name: a.title, url: `${SITE_URL}/blog/${a.slug}` }))),
+        buildOrganizationSchema(),
+      ]} />
 
       <BlogHero>
         <PageTitle>The Blog</PageTitle>

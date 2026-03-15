@@ -3,6 +3,9 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import SEOHead from '../../components/shared/SEOHead';
+import StructuredData from '../../components/shared/StructuredData';
+import { buildCourseSchema, buildBreadcrumbSchema, buildOrganizationSchema } from '../../utils/structuredData';
+import { SITE_URL } from '../../utils/constants';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import { media } from '../../styles/breakpoints';
@@ -550,6 +553,15 @@ const CourseDetail: React.FC = () => {
         path={`/learn/course/${course.slug}`}
         keywords={[course.category, course.difficulty, course.title, 'online course']}
       />
+      <StructuredData data={[
+        buildCourseSchema(course),
+        buildBreadcrumbSchema([
+          { name: 'Home', url: SITE_URL },
+          { name: 'Courses', url: `${SITE_URL}/learn` },
+          { name: course.title, url: `${SITE_URL}/learn/course/${course.slug}` },
+        ]),
+        buildOrganizationSchema(),
+      ]} />
 
       <Container>
         <BackLink to="/learn">← Back to Courses</BackLink>

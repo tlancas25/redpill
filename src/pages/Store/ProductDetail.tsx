@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import SEOHead from '../../components/shared/SEOHead';
+import StructuredData from '../../components/shared/StructuredData';
+import { buildProductSchema, buildBreadcrumbSchema, buildOrganizationSchema } from '../../utils/structuredData';
+import { SITE_URL } from '../../utils/constants';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Loader from '../../components/ui/Loader';
@@ -317,6 +320,15 @@ const ProductDetail: React.FC = () => {
         path={`/store/${product.slug}`}
         keywords={[product.category, product.type, product.title]}
       />
+      <StructuredData data={[
+        buildProductSchema(product),
+        buildBreadcrumbSchema([
+          { name: 'Home', url: SITE_URL },
+          { name: 'Store', url: `${SITE_URL}/store` },
+          { name: product.title, url: `${SITE_URL}/store/${product.slug}` },
+        ]),
+        buildOrganizationSchema(),
+      ]} />
 
       <Container>
         <BackLink to="/store">← Back to Store</BackLink>

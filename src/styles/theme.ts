@@ -1,4 +1,4 @@
-export const theme = {
+export const darkTheme = {
   colors: {
     primary: '#00ff41',
     secondary: '#008f11',
@@ -66,4 +66,37 @@ export const theme = {
   },
 };
 
-export type Theme = typeof theme;
+export const lightTheme: Theme = {
+  colors: {
+    primary: '#00aa2e',
+    secondary: '#008822',
+    background: '#f5f5f0',
+    surface: '#ffffff',
+    surfaceLight: '#eaeae5',
+    textPrimary: '#1a1a1a',
+    textSecondary: '#4a4a4a',
+    accent: '#cc2929',
+    warning: '#cc9900',
+    error: '#cc3333',
+    success: '#00aa2e',
+    border: '#d4d4d4',
+  },
+  fonts: darkTheme.fonts,
+  fontSizes: darkTheme.fontSizes,
+  spacing: darkTheme.spacing,
+  borderRadius: darkTheme.borderRadius,
+  shadows: {
+    sm: '0 1px 2px rgba(0, 0, 0, 0.05)',
+    md: '0 4px 6px rgba(0, 0, 0, 0.08)',
+    lg: '0 10px 15px rgba(0, 0, 0, 0.1)',
+    glow: '0 0 10px rgba(0, 170, 46, 0.15)',
+    glowStrong: '0 0 20px rgba(0, 170, 46, 0.2)',
+  },
+  transitions: darkTheme.transitions,
+  zIndex: darkTheme.zIndex,
+};
+
+// Backward compatibility
+export const theme = darkTheme;
+
+export type Theme = typeof darkTheme;

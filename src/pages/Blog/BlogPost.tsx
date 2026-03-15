@@ -2,6 +2,9 @@ import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import SEOHead from '../../components/shared/SEOHead';
+import StructuredData from '../../components/shared/StructuredData';
+import { buildArticleSchema, buildBreadcrumbSchema, buildOrganizationSchema } from '../../utils/structuredData';
+import { SITE_URL } from '../../utils/constants';
 import Button from '../../components/ui/Button';
 import { media } from '../../styles/breakpoints';
 import { articles } from '../../data/articles';
@@ -350,8 +353,8 @@ const BlogPost: React.FC = () => {
 
   return (
     <>
-      <SEOHead 
-        title={article.title} 
+      <SEOHead
+        title={article.title}
         description={article.excerpt}
         image={article.featuredImage}
         path={`/blog/${article.slug}`}
@@ -359,8 +362,19 @@ const BlogPost: React.FC = () => {
         keywords={article.tags}
         publishedTime={article.publishedAt.toISOString()}
         modifiedTime={article.updatedAt.toISOString()}
+        author={article.author.name}
+        section={article.category}
       />
-      
+      <StructuredData data={[
+        buildArticleSchema(article),
+        buildBreadcrumbSchema([
+          { name: 'Home', url: SITE_URL },
+          { name: 'Blog', url: `${SITE_URL}/blog` },
+          { name: article.title, url: `${SITE_URL}/blog/${article.slug}` },
+        ]),
+        buildOrganizationSchema(),
+      ]} />
+
       <BlogPostContainer>
         <BackLink to="/blog">← Back to Blog</BackLink>
         
