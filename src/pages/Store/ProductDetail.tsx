@@ -339,7 +339,7 @@ const ProductDetail: React.FC = () => {
               {hasImage ? (
                 <img src={product.images[0]} alt={product.title} />
               ) : (
-                product.type === 'course' ? '🎓' : '📘'
+                product.type === 'bundle' ? '📦' : product.type === 'course' ? '🎓' : '📘'
               )}
             </ProductImage>
           </ImageSection>
@@ -369,16 +369,22 @@ const ProductDetail: React.FC = () => {
                 <FeatureIcon>✓</FeatureIcon>
                 Lifetime updates
               </FeatureItem>
-              {product.type === 'course' && totalDuration > 0 && (
+              {(product.type === 'course' || product.type === 'bundle') && totalDuration > 0 && (
                 <FeatureItem>
                   <FeatureIcon>⏱</FeatureIcon>
                   {formatDuration(totalDuration)} of content
                 </FeatureItem>
               )}
-              {product.type === 'course' && product.curriculum && (
+              {(product.type === 'course' || product.type === 'bundle') && product.curriculum && (
                 <FeatureItem>
                   <FeatureIcon>📚</FeatureIcon>
-                  {product.curriculum.length} modules
+                  {product.curriculum.length} {product.type === 'bundle' ? 'skill packs' : 'modules'}
+                </FeatureItem>
+              )}
+              {product.type === 'bundle' && (
+                <FeatureItem>
+                  <FeatureIcon>🐍</FeatureIcon>
+                  18 Python scripts
                 </FeatureItem>
               )}
               {product.type === 'ebook' && (
@@ -406,14 +412,14 @@ const ProductDetail: React.FC = () => {
 
         <Divider />
 
-        <SectionTitle>About This {product.type === 'course' ? 'Course' : 'Book'}</SectionTitle>
+        <SectionTitle>About This {product.type === 'bundle' ? 'Bundle' : product.type === 'course' ? 'Course' : 'Book'}</SectionTitle>
         <Description>
           {product.description.split('\n').map((paragraph, i) => (
             <p key={i}>{paragraph}</p>
           ))}
         </Description>
 
-        {product.type === 'course' && product.curriculum && product.curriculum.length > 0 && (
+        {(product.type === 'course' || product.type === 'bundle') && product.curriculum && product.curriculum.length > 0 && (
           <>
             <Divider />
             <SectionTitle>Curriculum</SectionTitle>

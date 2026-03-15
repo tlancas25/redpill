@@ -32,7 +32,7 @@ export interface Product {
   price: number;
   salePrice: number | null;
   category: string;
-  type: 'ebook' | 'course';
+  type: 'ebook' | 'course' | 'bundle';
   images: string[];
   curriculum: CurriculumSection[];
   downloadUrl: string;

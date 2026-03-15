@@ -66,12 +66,14 @@ const products = [
     filename: 'x-monetization-system.png',
     prompt:
       'A premium 3D book mockup floating at a slight angle on a dark matte background. ' +
-      'The cover is matte black with the X logo (formerly Twitter) in white, surrounded by ' +
-      'flowing dollar signs and engagement icons (hearts, retweets) in electric blue and green. ' +
-      'Title "X Monetization System" in clean modern white font. ' +
-      'Subtitle "Content to Cash" in electric blue. ' +
+      'The book is thick, conveying a comprehensive bundle. The cover is matte black with ' +
+      'three glowing neon icons stacked vertically: a social media icon in electric blue, ' +
+      'a house/real estate icon in green, and a storefront/business icon in gold. ' +
+      'Subtle circuit board patterns connect all three icons. ' +
+      'Title "The X Monetization System" in bold clean white font at the top. ' +
+      'Subtitle "3 AI Agent Skill Packs" in electric blue below. ' +
       'Professional product photography, dramatic lighting, premium feel, 4K quality. ' +
-      'Looks like a modern social media marketing masterclass.',
+      'Looks like a premium AI automation bundle product.',
   },
 ];
 

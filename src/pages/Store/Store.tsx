@@ -209,7 +209,9 @@ const ProductImage = styled.div<{ $type: string }>`
   width: 100%;
   height: 200px;
   background: ${({ $type }) =>
-    $type === 'course'
+    $type === 'bundle'
+      ? 'linear-gradient(135deg, rgba(0, 170, 255, 0.08) 0%, rgba(138, 43, 226, 0.15) 100%)'
+      : $type === 'course'
       ? 'linear-gradient(135deg, rgba(0, 255, 65, 0.06) 0%, rgba(0, 143, 17, 0.15) 100%)'
       : 'linear-gradient(135deg, rgba(255, 51, 51, 0.06) 0%, rgba(255, 204, 0, 0.10) 100%)'};
   border: 1px solid rgba(0, 255, 65, 0.08);
@@ -514,10 +516,10 @@ const Store: React.FC = () => {
                     <Card hoverable>
                       <Link to={`/store/${product.slug}`} style={{ textDecoration: 'none' }}>
                         <ProductImage $type={product.type}>
-                          {product.type === 'course' ? '🎓' : '📘'}
+                          {product.type === 'bundle' ? '📦' : product.type === 'course' ? '🎓' : '📘'}
                         </ProductImage>
                         <TypeBadge>
-                          {product.type === 'course' ? 'COURSE' : 'EBOOK'}
+                          {product.type === 'bundle' ? 'BUNDLE' : product.type === 'course' ? 'COURSE' : 'EBOOK'}
                         </TypeBadge>
                         <ProductTitle>{product.title}</ProductTitle>
                         <ProductDesc>{product.shortDescription}</ProductDesc>

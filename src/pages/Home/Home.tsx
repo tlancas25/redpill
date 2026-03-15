@@ -303,7 +303,9 @@ const ProductImagePlaceholder = styled.div<{ $type: string }>`
   width: 100%;
   height: 180px;
   background: ${({ $type }) =>
-    $type === 'course'
+    $type === 'bundle'
+      ? 'linear-gradient(135deg, rgba(0, 170, 255, 0.08) 0%, rgba(138, 43, 226, 0.18) 100%)'
+      : $type === 'course'
       ? 'linear-gradient(135deg, rgba(0, 255, 65, 0.08) 0%, rgba(0, 143, 17, 0.18) 100%)'
       : 'linear-gradient(135deg, rgba(255, 51, 51, 0.08) 0%, rgba(255, 204, 0, 0.12) 100%)'};
   border-radius: ${({ theme }) => theme.borderRadius.md};
@@ -865,7 +867,7 @@ const Home: React.FC = () => {
                   <Card hoverable>
                     <Link to={`/store/${product.slug}`} style={{ textDecoration: 'none' }}>
                       <ProductImagePlaceholder $type={product.type}>
-                        {product.type === 'course' ? '🎓' : '📘'}
+                        {product.type === 'bundle' ? '📦' : product.type === 'course' ? '🎓' : '📘'}
                       </ProductImagePlaceholder>
                       <ProductTitle>{product.title}</ProductTitle>
                       <ProductDesc>{product.shortDescription}</ProductDesc>
