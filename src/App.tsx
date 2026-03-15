@@ -23,6 +23,7 @@ const AIInfo = lazy(() => import('./pages/AIInfo'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Settings = lazy(() => import('./pages/Settings/Settings'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Auth pages
@@ -95,6 +96,14 @@ const App: React.FC = () => {
                         element={
                           <ProtectedRoute>
                             <Dashboard />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/settings"
+                        element={
+                          <ProtectedRoute>
+                            <Settings />
                           </ProtectedRoute>
                         }
                       />

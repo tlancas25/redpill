@@ -92,7 +92,9 @@ const Dashboard: React.FC = () => {
       <DashboardContainer>
         <WelcomeSection>
           <WelcomeTitle>Welcome, {displayName}</WelcomeTitle>
-          <WelcomeSubtitle>Your learning command center.</WelcomeSubtitle>
+          <WelcomeSubtitle>
+            Your learning command center. <Link to="/settings" style={{ color: 'inherit', textDecoration: 'underline' }}>Account Settings</Link>
+          </WelcomeSubtitle>
         </WelcomeSection>
 
         <StatsGrid>

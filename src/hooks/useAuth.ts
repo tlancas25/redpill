@@ -5,6 +5,9 @@ import {
   loginWithGoogle,
   logout,
   resetPassword,
+  updateUserProfile,
+  changePassword,
+  deleteAccount,
 } from '../services/auth';
 
 /**
@@ -122,6 +125,44 @@ export const useAuth = () => {
     }
   };
 
+  const handleUpdateProfile = async (data: { displayName?: string; photoURL?: string }) => {
+    if (!user) throw new Error('Not authenticated');
+    try {
+      setError(null);
+      await updateUserProfile(user, data);
+    } catch (err: any) {
+      const msg = getFirebaseErrorMessage(err);
+      if (msg) setError(msg);
+      throw err;
+    }
+  };
+
+  const handleChangePassword = async (currentPassword: string, newPassword: string) => {
+    if (!user) throw new Error('Not authenticated');
+    try {
+      setError(null);
+      await changePassword(user, currentPassword, newPassword);
+    } catch (err: any) {
+      const msg = getFirebaseErrorMessage(err);
+      if (msg) setError(msg);
+      throw err;
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user) throw new Error('Not authenticated');
+    try {
+      setError(null);
+      await deleteAccount(user);
+      localStorage.removeItem('github_token');
+      localStorage.removeItem('github_user');
+    } catch (err: any) {
+      const msg = getFirebaseErrorMessage(err);
+      if (msg) setError(msg);
+      throw err;
+    }
+  };
+
   return {
     user,
     userProfile,
@@ -132,6 +173,9 @@ export const useAuth = () => {
     googleLogin: handleGoogleLogin,
     logout: handleLogout,
     resetPassword: handleResetPassword,
+    updateProfile: handleUpdateProfile,
+    changePassword: handleChangePassword,
+    deleteAccount: handleDeleteAccount,
     isAuthenticated: !!user,
   };
 };

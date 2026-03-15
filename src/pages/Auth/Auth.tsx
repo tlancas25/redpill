@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import SEOHead from '../../components/shared/SEOHead';
 import Button from '../../components/ui/Button';
@@ -160,15 +160,26 @@ export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formLoading, setFormLoading] = useState(false);
-  const { login, googleLogin, error } = useAuth();
+  const { login, googleLogin, error, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Where to send the user after login (cart, dashboard, etc.)
+  const redirectTo = (location.state as any)?.from || '/dashboard';
+
+  // If user is already authenticated (or auth state just propagated), redirect
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(redirectTo, { replace: true });
+    }
+  }, [isAuthenticated, navigate, redirectTo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormLoading(true);
     try {
       await login(email, password);
-      navigate('/dashboard');
+      navigate(redirectTo, { replace: true });
     } catch {
       // Error handled by auth context
     }
@@ -178,7 +189,7 @@ export const LoginPage: React.FC = () => {
   const handleGoogle = async () => {
     try {
       await googleLogin();
-      navigate('/dashboard');
+      navigate(redirectTo, { replace: true });
     } catch {
       // Error handled by auth context
     }
@@ -228,7 +239,7 @@ export const LoginPage: React.FC = () => {
             <Link to="/forgot-password">Forgot password?</Link>
           </BottomLink>
           <BottomLink>
-            Don't have an account? <Link to="/register">Register</Link>
+            Don't have an account? <Link to="/register" state={{ from: redirectTo }}>Register</Link>
           </BottomLink>
         </AuthCard>
       </AuthContainer>
@@ -244,8 +255,18 @@ export const RegisterPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState('');
-  const { register, googleLogin, error } = useAuth();
+  const { register, googleLogin, error, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectTo = (location.state as any)?.from || '/dashboard';
+
+  // Redirect when auth state propagates (handles Google OAuth race condition)
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(redirectTo, { replace: true });
+    }
+  }, [isAuthenticated, navigate, redirectTo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -268,7 +289,7 @@ export const RegisterPage: React.FC = () => {
     setFormLoading(true);
     try {
       await register(email, password, name);
-      navigate('/dashboard');
+      navigate(redirectTo, { replace: true });
     } catch {
       // Error displayed via useAuth error state
     }
@@ -278,7 +299,7 @@ export const RegisterPage: React.FC = () => {
   const handleGoogle = async () => {
     try {
       await googleLogin();
-      navigate('/dashboard');
+      navigate(redirectTo, { replace: true });
     } catch {
       // Error displayed via useAuth error state
     }
@@ -344,7 +365,7 @@ export const RegisterPage: React.FC = () => {
             <GoogleIcon /> Sign in with Google
           </GoogleButton>
           <BottomLink>
-            Already have an account? <Link to="/login">Login</Link>
+            Already have an account? <Link to="/login" state={{ from: redirectTo }}>Login</Link>
           </BottomLink>
         </AuthCard>
       </AuthContainer>

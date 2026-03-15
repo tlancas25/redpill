@@ -4,11 +4,15 @@ import {
   signOut,
   sendPasswordResetEmail,
   updateProfile,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  deleteUser,
   GoogleAuthProvider,
   signInWithPopup,
   User,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import { UserProfile } from '../types';
 
@@ -85,4 +89,37 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
     return userDoc.data() as UserProfile;
   }
   return null;
+};
+
+export const updateUserProfile = async (
+  user: User,
+  data: { displayName?: string; photoURL?: string }
+) => {
+  const a = requireAuth();
+  const d = requireDb();
+  // Update Firebase Auth profile
+  await updateProfile(user, data);
+  // Update Firestore document
+  await updateDoc(doc(d, 'users', user.uid), data);
+  // Force auth state refresh so context picks up new data
+  await a.currentUser?.reload();
+};
+
+export const changePassword = async (
+  user: User,
+  currentPassword: string,
+  newPassword: string
+) => {
+  // Re-authenticate before changing password
+  const credential = EmailAuthProvider.credential(user.email!, currentPassword);
+  await reauthenticateWithCredential(user, credential);
+  await updatePassword(user, newPassword);
+};
+
+export const deleteAccount = async (user: User) => {
+  const d = requireDb();
+  // Delete Firestore profile first
+  await deleteDoc(doc(d, 'users', user.uid));
+  // Then delete the Firebase Auth account
+  await deleteUser(user);
 };
