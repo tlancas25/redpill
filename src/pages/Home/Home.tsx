@@ -653,7 +653,7 @@ const useMatrixRain = (canvasRef: React.RefObject<HTMLCanvasElement | null>) => 
     resize();
     window.addEventListener('resize', resize);
 
-    const draw = () => {
+    const draw = () => { // eslint-disable-line @typescript-eslint/no-unused-vars
       ctx.fillStyle = 'rgba(13, 13, 13, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#00ff41';
