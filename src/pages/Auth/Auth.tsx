@@ -77,11 +77,17 @@ const GoogleButton = styled.button`
   background: transparent;
   color: ${({ theme }) => theme.colors.textPrimary};
   font-size: 0.875rem;
+  cursor: pointer;
   transition: all ${({ theme }) => theme.transitions.fast};
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.primary};
     background: rgba(0, 255, 65, 0.05);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 `;
 
@@ -190,7 +196,7 @@ export const LoginPage: React.FC = () => {
             </Button>
           </Form>
           <Divider><span>or</span></Divider>
-          <GoogleButton onClick={handleGoogle}>
+          <GoogleButton type="button" onClick={handleGoogle}>
             🔵 Continue with Google
           </GoogleButton>
           <BottomLink>
@@ -309,7 +315,7 @@ export const RegisterPage: React.FC = () => {
             </Button>
           </Form>
           <Divider><span>or</span></Divider>
-          <GoogleButton onClick={handleGoogle}>
+          <GoogleButton type="button" onClick={handleGoogle}>
             🔵 Continue with Google
           </GoogleButton>
           <BottomLink>

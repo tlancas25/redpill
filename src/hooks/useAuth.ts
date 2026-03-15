@@ -33,6 +33,10 @@ const getFirebaseErrorMessage = (err: any): string => {
       return 'Please enter a valid email address.';
 
     // Google OAuth errors
+    case 'auth/operation-not-allowed':
+      return 'Google sign-in is not enabled. Please contact the site administrator.';
+    case 'auth/unauthorized-domain':
+      return 'This domain is not authorized for sign-in. Please contact the site administrator.';
     case 'auth/popup-closed-by-user':
       return 'Sign-in popup was closed. Please try again.';
     case 'auth/popup-blocked':
