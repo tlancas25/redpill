@@ -41,6 +41,15 @@ for (const [configKey, envKey] of Object.entries(mapping)) {
   }
 }
 
+// Also forward any REACT_APP_* env vars already in the environment
+// (e.g. REACT_APP_STRIPE_PUBLISHABLE_KEY set in apphosting.yaml)
+const written = new Set(Object.values(mapping));
+for (const [key, value] of Object.entries(process.env)) {
+  if (key.startsWith('REACT_APP_') && !written.has(key) && value) {
+    lines.push(`${key}=${value}`);
+  }
+}
+
 const envPath = path.join(__dirname, '..', '.env.production.local');
 fs.writeFileSync(envPath, lines.join('\n') + '\n', 'utf8');
 console.log(`[firebase-env] Wrote ${lines.length - 1} vars to .env.production.local`);

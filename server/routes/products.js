@@ -93,7 +93,7 @@ const products = [
     salePrice: null,
     category: 'AI & Automation',
     type: 'bundle',
-    images: ['/images/products/x-monetization-system.png'],
+    images: ['/images/products/x-monetization-system.jpg'],
     curriculum: [
       { title: 'The OpenClaw Foundation', duration: 30 },
       { title: 'Social Media Monetization — 7 Scripts', duration: 60 },

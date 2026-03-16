@@ -5,6 +5,10 @@ runConfig:
   cpu: 1
   memoryMiB: 512
 
+env:
+  - variable: REACT_APP_STRIPE_PUBLISHABLE_KEY
+    value: pk_live_51T5wxURpLFWUKDnHqfpicIHKSLMtN3yn4dqr2rpRHXnbpBHj6ib48FJovuL1toQPzUsBuhC0PibCRiwemF3MPyXQ00R1hXis8o
+
 scripts:
   buildCommand: npm install --prefix server && npm run build
   runCommand: node server/apphosting.js
