@@ -40,6 +40,7 @@ export const productsAPI = {
   getBySlug: (slug: string) => api.get(`/products/slug/${slug}`),
   getByCategory: (category: string) => api.get(`/products/category/${category}`),
   getFeatured: () => api.get('/products/featured'),
+  getDownload: (id: string, userId: string, orderId: string) => api.post(`/products/${id}/download`, { userId, orderId }),
 };
 
 // Blog API
