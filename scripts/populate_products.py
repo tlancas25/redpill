@@ -7,10 +7,15 @@ import json
 from datetime import datetime
 
 # Initialize with redpill project
-cred = credentials.Certificate('/Users/craigmac/.openclaw/google_credentials.json')
-firebase_admin.initialize_app(cred, {
-    'projectId': 'redpillreader-249ec'
-})
+import os
+credentials_path = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+
+if credentials_path:
+    cred = credentials.Certificate(credentials_path)
+    firebase_admin.initialize_app(cred, {'projectId': 'redpillreader-249ec'})
+else:
+    # Use default credentials if env var not set
+    firebase_admin.initialize_app(options={'projectId': 'redpillreader-249ec'})
 
 db = firestore.client()
 
@@ -25,7 +30,7 @@ products = [
         'salePrice': None,
         'category': 'Tech & Development',
         'type': 'course',
-        'images': ['/images/products/openclaw-masterclass.jpg'],
+        'images': ['/images/products/openclaw-masterclass.png'],
         'curriculum': [
             {'title': 'Module 1: WTF is an Agent?', 'duration': 20},
             {'title': 'Module 2: OpenClaw Setup from Zero', 'duration': 45},
@@ -50,7 +55,7 @@ products = [
         'salePrice': None,
         'category': 'Cybersecurity',
         'type': 'ebook',
-        'images': ['/images/products/agent-security.jpg'],
+        'images': ['/images/products/agent-security-field-guide.png'],
         'curriculum': [],
         'stripePriceId': 'price_1T9DntRpLFWUKDnHsZ7cKk83',
         'rating': 0,
@@ -69,7 +74,7 @@ products = [
         'salePrice': None,
         'category': 'Finance & Trading',
         'type': 'course',
-        'images': ['/images/products/trading-bot.jpg'],
+        'images': ['/images/products/trading-bot-blueprint.png'],
         'curriculum': [
             {'title': 'Market Making vs Directional', 'duration': 25},
             {'title': 'Alpaca Setup + Paper Trading', 'duration': 35},
@@ -94,7 +99,7 @@ products = [
         'salePrice': None,
         'category': 'Business & Marketing',
         'type': 'course',
-        'images': ['/images/products/x-monetization.jpg'],
+        'images': ['/images/products/x-monetization-system.png'],
         'curriculum': [
             {'title': 'Audience Building 0 to 1K', 'duration': 30},
             {'title': 'Content Systems That Work', 'duration': 35},

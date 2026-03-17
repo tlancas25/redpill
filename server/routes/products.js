@@ -20,7 +20,7 @@ const products = [
     salePrice: null,
     category: 'Tech & Development',
     type: 'course',
-    images: ['/images/products/openclaw-masterclass.jpg'],
+    images: ['/images/products/openclaw-masterclass.png'],
     curriculum: [
       { title: 'Module 1: WTF is an Agent?', duration: 20 },
       { title: 'Module 2: OpenClaw Setup from Zero', duration: 45 },
@@ -45,7 +45,7 @@ const products = [
     salePrice: null,
     category: 'Cybersecurity',
     type: 'ebook',
-    images: ['/images/products/agent-security.jpg'],
+    images: ['/images/products/agent-security-field-guide.png'],
     curriculum: [],
     stripePriceId: 'price_1T9DntRpLFWUKDnHsZ7cKk83',
     downloadUrl: 'https://firebasestorage.googleapis.com/v0/b/redpillreader-249ec.firebasestorage.app/o/dowloads%2FAgent_Security_Field_Guide_OpenClaw.pdf?alt=media&token=4f7c3f4b-1db0-4d15-835c-e1b8501a76e5',
@@ -65,7 +65,7 @@ const products = [
     salePrice: null,
     category: 'Finance & Trading',
     type: 'course',
-    images: ['/images/products/trading-bot.jpg'],
+    images: ['/images/products/trading-bot-blueprint.png'],
     curriculum: [
       { title: 'Dominator Architecture', duration: 25 },
       { title: '7-Engine System Design', duration: 35 },
@@ -93,7 +93,7 @@ const products = [
     salePrice: null,
     category: 'AI & Automation',
     type: 'bundle',
-    images: ['/images/products/x-monetization-system.jpg'],
+    images: ['/images/products/x-monetization-system.png'],
     curriculum: [
       { title: 'The OpenClaw Foundation', duration: 30 },
       { title: 'Social Media Monetization — 7 Scripts', duration: 60 },
